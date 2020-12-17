@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="450.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="resources.Configuration_fxmlController">
+    <stylesheets>
+        <URL value="@main_fxml.css" />
+    </stylesheets>
+    <children>
+        <Label layoutX="59.0" layoutY="60.0" text="Anzahl der Clouds: ">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Spinner fx:id="numberOfCloudsSpinner" initialValue="1" layoutX="202.0" layoutY="58.0" max="5" min="1" />
+        <Button fx:id="confirmNumberOfCloudButton" layoutX="375.0" layoutY="58.0" mnemonicParsing="false" onAction="#confirmNumberOfCloud" text="Bestätigen" />
+        
+        
+        <Label fx:id="cloudLabel0" layoutX="49.0" layoutY="131.0" text="1. Cloud">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="openDirChooserButton0" layoutX="416.0" layoutY="128.0" mnemonicParsing="false" onAction="#openDirChooser0" prefHeight="25.0" prefWidth="42.0" text="..." />
+        <TextField fx:id="cloudField0" layoutX="123.0" layoutY="128.0" prefHeight="25.0" prefWidth="276.0" />
+      <Spinner fx:id="sizeSpinner0" initialValue="1" layoutX="467.0" layoutY="128.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Label layoutX="534.0" layoutY="131.0" text="GB">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        
+        <Label fx:id="cloudLabel1" disable="true" layoutX="49.0" layoutY="164.0" text="2. Cloud">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="openDirChooserButton1" disable="true" layoutX="416.0" layoutY="161.0" mnemonicParsing="false" onAction="#openDirChooser1" prefHeight="25.0" prefWidth="42.0" text="..." />
+      <Spinner fx:id="sizeSpinner1" disable="true" initialValue="1" layoutX="467.0" layoutY="162.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Label layoutX="534.0" layoutY="164.0" text="GB">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="cloudField1" disable="true" layoutX="123.0" layoutY="161.0" prefHeight="25.0" prefWidth="276.0" />
+          
+        <Label fx:id="cloudLabel2" disable="true" layoutX="49.0" layoutY="199.0" text="3. Cloud">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="openDirChooserButton2" disable="true" layoutX="416.0" layoutY="196.0" mnemonicParsing="false" onAction="#openDirChooser2" prefHeight="25.0" prefWidth="42.0" text="..." />
+      <Spinner fx:id="sizeSpinner2" disable="true" initialValue="1" layoutX="467.0" layoutY="196.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Label layoutX="534.0" layoutY="199.0" text="GB">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="cloudField2" disable="true" layoutX="123.0" layoutY="196.0" prefHeight="25.0" prefWidth="276.0" />
+          
+        <Label fx:id="cloudLabel3" disable="true" layoutX="49.0" layoutY="232.0" text="4. Cloud">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="openDirChooserButton3" disable="true" layoutX="416.0" layoutY="229.0" mnemonicParsing="false" onAction="#openDirChooser3" prefHeight="25.0" prefWidth="42.0" text="..." />
+      <Spinner fx:id="sizeSpinner3" disable="true" initialValue="1" layoutX="467.0" layoutY="229.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Label layoutX="534.0" layoutY="232.0" text="GB">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="cloudField3" disable="true" layoutX="123.0" layoutY="229.0" prefHeight="25.0" prefWidth="276.0" />
+          
+        <Label fx:id="cloudLabel4" disable="true" layoutX="49.0" layoutY="268.0" text="5. Cloud">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="openDirChooserButton4" disable="true" layoutX="416.0" layoutY="265.0" mnemonicParsing="false" onAction="#openDirChooser4" prefHeight="25.0" prefWidth="42.0" text="..." />
+      <Spinner fx:id="sizeSpinner4" disable="true" initialValue="1" layoutX="467.0" layoutY="266.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Label layoutX="534.0" layoutY="268.0" text="GB">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="cloudField4" disable="true" layoutX="123.0" layoutY="265.0" prefHeight="25.0" prefWidth="276.0" />
+          
+          
+        
+      
+        <Button fx:id="confirmConfigButton" layoutX="109.0" layoutY="354.0" mnemonicParsing="false" onAction="#confirmConfig" prefHeight="35.0" prefWidth="174.0" text="Änderungen übernehmen">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Button>
+        <Button fx:id="closeConfigButton" layoutX="392.0" layoutY="354.0" mnemonicParsing="false" onAction="#closeConfig" prefHeight="35.0" prefWidth="100.0" text="Schließen">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Button>
+      
+    </children>
+</AnchorPane>

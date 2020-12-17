@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="400.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="resources.DirChooser_fxmlController">
+    <stylesheets>
+        <URL value="@main_fxml.css" />
+    </stylesheets>
+    <children>
+      <Button fx:id="chooseCloudButton" layoutX="50.0" layoutY="75.0" mnemonicParsing="false" onAction="#chooseCloud" text="Cloud auswählen..."/>
+      <Button disable="true" fx:id="confirmCloudButton" layoutX="50.0" layoutY="139.0" mnemonicParsing="false" text="Bestätigen" onAction="#confirmCloud"/>
+      <Button fx:id="closeCloudChooserButton" layoutX="276.0" layoutY="139.0" mnemonicParsing="false" text="Abbrechen" onAction="#closeCloudChooser"/>
+      <TextArea fx:id="cloudPathField" layoutX="50.0" layoutY="23.0" prefHeight="38.0" prefWidth="300.0" />
+   </children>
+</AnchorPane>
