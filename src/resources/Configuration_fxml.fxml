@@ -18,7 +18,7 @@
                 <Font size="14.0" />
             </font>
         </Label>
-        <Spinner fx:id="numberOfCloudsSpinner" initialValue="1" layoutX="192.0" layoutY="127.0" max="5" min="1" />
+        <Spinner fx:id="numberOfCloudsSpinner" initialValue="2" layoutX="192.0" layoutY="127.0" max="5" min="2" />
         <Button fx:id="confirmNumberOfCloudButton" layoutX="365.0" layoutY="127.0" mnemonicParsing="false" onAction="#confirmNumberOfCloud" text="Bestätigen" />
         
         
@@ -36,19 +36,19 @@
             </font>
         </Label>
         
-        <Label fx:id="cloudLabel1" disable="true" layoutX="49.0" layoutY="234.0" text="2. Cloud">
+        <Label fx:id="cloudLabel1" layoutX="49.0" layoutY="234.0" text="2. Cloud">
             <font>
                 <Font size="14.0" />
             </font>
         </Label>
-        <Button fx:id="openDirChooserButton1" disable="true" layoutX="416.0" layoutY="231.0" mnemonicParsing="false" onAction="#openDirChooser1" prefHeight="25.0" prefWidth="42.0" text="..." />
-        <Spinner fx:id="sizeSpinner1" disable="true" initialValue="1" layoutX="467.0" layoutY="232.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
+        <Button fx:id="openDirChooserButton1" layoutX="416.0" layoutY="231.0" mnemonicParsing="false" onAction="#openDirChooser1" prefHeight="25.0" prefWidth="42.0" text="..." />
+        <Spinner fx:id="sizeSpinner1" initialValue="1" layoutX="467.0" layoutY="232.0" max="10" min="1" prefHeight="25.0" prefWidth="60.0" />
         <Label layoutX="534.0" layoutY="234.0" text="GB">
             <font>
                 <Font size="14.0" />
             </font>
         </Label>
-        <TextField fx:id="cloudField1" disable="true" layoutX="123.0" layoutY="231.0" prefHeight="25.0" prefWidth="276.0" />
+        <TextField fx:id="cloudField1" layoutX="123.0" layoutY="231.0" prefHeight="25.0" prefWidth="276.0" />
           
         <Label fx:id="cloudLabel2" disable="true" layoutX="49.0" layoutY="269.0" text="3. Cloud">
             <font>

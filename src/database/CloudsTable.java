@@ -142,6 +142,7 @@ public class CloudsTable {
                 connection.close();
             }
         }
+        System.out.println(size);
         return size;
     }
 

@@ -7,12 +7,16 @@ import database.TempDir;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -47,8 +51,6 @@ public class Configuration_fxmlController implements Initializable {
     @FXML
     private Button closeConfigButton;
     @FXML
-    private Button openDirChooserButton;
-    @FXML
     private Spinner numberOfCloudsSpinner;
 
     @FXML
@@ -74,7 +76,12 @@ public class Configuration_fxmlController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             numberOfCloudsSpinner.getValueFactory().setValue(cloudsTable.getNumberOfCloudsFromDatabase());
-            spinnerValue = cloudsTable.getNumberOfCloudsFromDatabase();
+            if (cloudsTable.getNumberOfCloudsFromDatabase() == 0) {
+                spinnerValue = 2;
+            } else {
+                spinnerValue = cloudsTable.getNumberOfCloudsFromDatabase();
+            }
+
             try {
                 cloudField0.setText(placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(0)));
                 cloudField1.setText(placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(1)));
@@ -263,56 +270,80 @@ public class Configuration_fxmlController implements Initializable {
      * @param e
      */
     @FXML
-    public void confirmConfig(ActionEvent e) throws SQLException {
-        if (sizeSpinner0.getValue() != null) {
-            cloudSize[0] = (int) sizeSpinner0.getValue();
+    public void confirmConfig(ActionEvent e) throws SQLException, IOException {
+        boolean check = false;
+        /*
+        if (tempField.getText().equals("") || tempField.getText().equals("Es wurde kein Temp-Ordner ausgewählt")
+                || cloudField0.getText().equals("") || cloudField0.getText().equals("Es wurde keine Cloud ausgewählt")
+                || cloudField1.getText().equals("") || cloudField1.getText().equals("Es wurde keine Cloud ausgewählt")) {
+            check = true;
         }
-        if (sizeSpinner1.getValue() != null) {
-            cloudSize[1] = (int) sizeSpinner1.getValue();
-        }
-        if (sizeSpinner2.getValue() != null) {
-            cloudSize[2] = (int) sizeSpinner2.getValue();
-        }
-        if (sizeSpinner3.getValue() != null) {
-            cloudSize[3] = (int) sizeSpinner3.getValue();
-        }
-        if (sizeSpinner4.getValue() != null) {
-            cloudSize[4] = (int) sizeSpinner4.getValue();
+         */
+        if (tempDirPath != null && selectedDirPath[0] != null && selectedDirPath[1] != null) {
+            check = true;
         }
 
-        for (int i = 0; i < selectedDirPath.length; i++) {
-            if (selectedDirPath[i] != null) {
-                try {
-                    if (!cloudsTable.cloudExists(i + 1)) {
-                        Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
-                        cloudsTable.saveCloud(clouds);
-                    } else {
-                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                        if (!cloudName.equals(selectedDirPath[i])) {
-                            cloudsTable.deleteCloudForReplacement(i + 1);
+        if (check == true) {
+            if (sizeSpinner0.getValue() != null) {
+                cloudSize[0] = (int) sizeSpinner0.getValue();
+            }
+            if (sizeSpinner1.getValue() != null) {
+                cloudSize[1] = (int) sizeSpinner1.getValue();
+            }
+            if (sizeSpinner2.getValue() != null) {
+                cloudSize[2] = (int) sizeSpinner2.getValue();
+            }
+            if (sizeSpinner3.getValue() != null) {
+                cloudSize[3] = (int) sizeSpinner3.getValue();
+            }
+            if (sizeSpinner4.getValue() != null) {
+                cloudSize[4] = (int) sizeSpinner4.getValue();
+            }
+
+            for (int i = 0; i < selectedDirPath.length; i++) {
+                if (selectedDirPath[i] != null) {
+                    try {
+                        if (!cloudsTable.cloudExists(i + 1)) {
                             Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
                             cloudsTable.saveCloud(clouds);
+                        } else {
+                            String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                            if (!cloudName.equals(selectedDirPath[i])) {
+                                cloudsTable.deleteCloudForReplacement(i + 1);
+                                Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
+                                cloudsTable.saveCloud(clouds);
+                            }
                         }
+                    } catch (Exception exception) {
+                        logger.log(Level.SEVERE, exception.getMessage());
                     }
-                } catch (Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage());
                 }
             }
-        }
-        cloudsTable.deleteCloudFromDatabase(spinnerValue);
-        cloudsTable.updateCloudNumber(spinnerValue);
+            cloudsTable.deleteCloudFromDatabase(spinnerValue);
+            cloudsTable.updateCloudNumber(spinnerValue);
 
-        System.out.println("Anzahl der Clouds: " + cloudsTable.getNumberOfCloudsFromDatabase());
+            System.out.println("Anzahl der Clouds: " + cloudsTable.getNumberOfCloudsFromDatabase());
 
-        if (!tempDir.tempDirExists()) {
-            tempDir.saveTempDir(placeholderPath.setPlaceholder(tempDirPath));
+            if (tempDirPath != null) {
+                if (!tempDir.tempDirExists()) {
+                    tempDir.saveTempDir(placeholderPath.setPlaceholder(tempDirPath));
+                } else {
+                    tempDir.deletetempDirForReplacement();
+                    tempDir.saveTempDir(tempDirPath);
+                }
+            }
+            Stage stage = (Stage) confirmConfigButton.getScene().getWindow();
+            stage.close();
         } else {
-            tempDir.deletetempDirForReplacement();
-            tempDir.saveTempDir(tempDirPath);
+            Parent root;
+            FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("ConfigDialog_fxml.fxml"));
+            root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Angaben fehlen");
+            stage.setScene(new Scene(root, 450, 200));
+            stage.showAndWait();
         }
 
-        Stage stage = (Stage) confirmConfigButton.getScene().getWindow();
-        stage.close();
     }
 
     /**
@@ -354,28 +385,7 @@ public class Configuration_fxmlController implements Initializable {
      */
     private void checkNumberOfClouds(int number) {
         switch (number) {
-            case 1:
-                openDirChooserButton1.setDisable(true);
-                openDirChooserButton2.setDisable(true);
-                openDirChooserButton3.setDisable(true);
-                openDirChooserButton4.setDisable(true);
-                cloudField1.setDisable(true);
-                cloudField2.setDisable(true);
-                cloudField3.setDisable(true);
-                cloudField4.setDisable(true);
-                cloudLabel1.setDisable(true);
-                cloudLabel2.setDisable(true);
-                cloudLabel3.setDisable(true);
-                cloudLabel4.setDisable(true);
-                sizeSpinner1.setDisable(true);
-                sizeSpinner2.setDisable(true);
-                sizeSpinner3.setDisable(true);
-                sizeSpinner4.setDisable(true);
-                cloudField1.setText("");
-                cloudField2.setText("");
-                cloudField3.setText("");
-                cloudField4.setText("");
-                break;
+
             case 2:
                 openDirChooserButton1.setDisable(false);
                 openDirChooserButton2.setDisable(true);
