@@ -116,6 +116,8 @@ public class Main_fxmlController extends Thread implements Initializable {
                 }
             }
         }
+        //TODO Abfrage über Config
+        String homeDir = System.getProperty("user.home");
         treeViewFile = new File("C:\\Users\\danvi\\Desktop\\Praktikum\\TestUserOrdner");
         try {
             treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
@@ -139,7 +141,7 @@ public class Main_fxmlController extends Thread implements Initializable {
             root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Einstellungen");
-            stage.setScene(new Scene(root, 600, 450));
+            stage.setScene(new Scene(root, 600, 520));
             stage.showAndWait();
 
         } catch (IOException e) {
@@ -248,7 +250,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                         dann wird ein Dialog Fenster geöffnet, dass dem Anwender mitteilt, dass es
                         noch ein wenig dauern wird
                      */
-                    //TODO Progress wird nicht angezeigt
                     String fileSize = originalFileTable.getLastEntrySize();
                     int size = 0;
                     for (int i = fileSize.length() - 1; i >= 0; i--) {
@@ -306,7 +307,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                         dann wird ein Dialog Fenster geöffnet, dass dem Anwender mitteilt, dass es
                         noch ein wenig dauern wird
                          */
-                        //TODO Progress wird nicht angzeigt
                         String fileSize = originalFileTable.getLastEntrySize();
                         int size = 0;
                         for (int i = fileSize.length() - 1; i >= 0; i--) {

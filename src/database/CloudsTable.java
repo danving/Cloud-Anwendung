@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 /**
  * Verwaltet die Cloud Tabelle aus der Datenbank
+ *
  * @author danvi
  */
 public class CloudsTable {
@@ -19,11 +20,11 @@ public class CloudsTable {
     /**
      * Überprüft, ob in der Datenbank bereits diese Cloud gespeichert wurde
      *
-     * @param cloudName Name der Cloud, die ausgewählt wurde
+     * @param cloudNumber ID der Cloud, die ausgewählt wurde
      * @return
      * @throws SQLException
      */
-    public boolean cloudExists(String cloudName) throws SQLException {
+    public boolean cloudExists(int cloudNumber) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         boolean exists = false;
@@ -31,10 +32,10 @@ public class CloudsTable {
         try {
             connection = Database.getDBConnection();
             connection.setAutoCommit(false);
-            String query = "SELECT * FROM clouds WHERE cloud = ?";
+            String query = "SELECT * FROM clouds WHERE id = ?";
             statement = connection.prepareStatement(query);
             int counter = 1;
-            statement.setString(counter++, cloudName);
+            statement.setInt(counter++, cloudNumber);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 exists = true;
@@ -59,9 +60,10 @@ public class CloudsTable {
 
     /**
      * Speichert die ausgewählte Cloud in der Datenbank
+     *
      * @param cloudName
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public int saveCloud(Clouds cloudName) throws SQLException {
         Connection connection = null;
@@ -107,13 +109,12 @@ public class CloudsTable {
 
         return 0;
     }
-    
-    
 
     /**
      * Gibt die Anzahl der ausgewählten Clouds zurück
+     *
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public int getNumberOfCloudsFromDatabase() throws SQLException {
         Connection connection = null;
@@ -143,12 +144,13 @@ public class CloudsTable {
         }
         return size;
     }
-    
+
     /**
-     * Gibt ein double-Array mit den Speicherkapazitäten aller Clouds,
-     * die in der Datenbank gespeichert sind zurück
+     * Gibt ein double-Array mit den Speicherkapazitäten aller Clouds, die in
+     * der Datenbank gespeichert sind zurück
+     *
      * @return int[] size
-     * @throws SQLException 
+     * @throws SQLException
      */
     public int[] getCloudSize() throws SQLException {
         Connection connection = null;
@@ -177,7 +179,7 @@ public class CloudsTable {
                 connection.close();
             }
         }
-        
+
         return size;
     }
 
@@ -216,29 +218,31 @@ public class CloudsTable {
                 connection.close();
             }
         }
-        for(int i = 0; i < cloudsList.length; i++) {
+        for (int i = 0; i < cloudsList.length; i++) {
             //System.out.println(cloudsList[i]);
         }
         return cloudsList[index];
     }
 
     /**
-     * Löscht früher ausgwählte Clouds, die nun vom Anwender nicht mehr gebraucht werden
+     * Löscht früher ausgwählte Clouds, die nun vom Anwender nicht mehr
+     * gebraucht werden
+     *
      * @param numberOfClouds
-     * @throws SQLException 
+     * @throws SQLException
      */
     public void deleteCloudFromDatabase(int numberOfClouds) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = Database.getDBConnection();
-            
+
             String query = "DELETE FROM clouds WHERE id > ?";
             statement = connection.prepareStatement(query);
             statement.setInt(1, numberOfClouds);
             //System.out.println(statement);
             statement.executeUpdate();
-            if(!connection.getAutoCommit()) {
+            if (!connection.getAutoCommit()) {
                 connection.commit();
             }
         } catch (SQLException exception) {
@@ -253,23 +257,59 @@ public class CloudsTable {
             }
         }
     }
+
     
     /**
-     * Aktualisiert die Anzahl der Clouds in der Datenbank, sobald diese sich ändert
-     * @param numberOfClouds
+     * Löscht den Eintrag mit einer bestimmten Id, damit die zuvor angegebene Cloud
+     * durch eine neue ersetzt werden kann
+     * @param numberOfCloud cloud id die ersetzt werden soll
      * @throws SQLException 
+     */
+    public void deleteCloudForReplacement(int numberOfCloud) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+
+            String query = "DELETE FROM clouds WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, numberOfCloud);
+            //System.out.println(statement);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+    }
+
+    /**
+     * Aktualisiert die Anzahl der Clouds in der Datenbank, sobald diese sich
+     * ändert
+     *
+     * @param numberOfClouds
+     * @throws SQLException
      */
     public void updateCloudNumber(int numberOfClouds) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = Database.getDBConnection();
-            
+
             String query = "UPDATE clouds SET numberOfClouds = ?";
             statement = connection.prepareStatement(query);
             statement.setInt(1, numberOfClouds);
             statement.executeUpdate();
-            if(!connection.getAutoCommit()) {
+            if (!connection.getAutoCommit()) {
                 connection.commit();
             }
         } catch (SQLException exception) {

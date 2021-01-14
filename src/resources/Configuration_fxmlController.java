@@ -3,6 +3,7 @@ package resources;
 import cloudtestfxml.PlaceholderPath;
 import database.Clouds;
 import database.CloudsTable;
+import database.TempDir;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
@@ -24,19 +25,21 @@ import javafx.stage.Stage;
  *
  * @author danvi
  */
-//TODO Abfrage des Homeverzeichnis
 public class Configuration_fxmlController implements Initializable {
 
     File selectedDir;
-    String selectedDirPath[] = new String[5];
+    String selectedDirPath[] = new String[6];
     int cloudSize[] = new int[5];
     TextField textfield[] = new TextField[10];
     int spinnerValue;
     int i = 1;
+    String tempDirPath;
+    String homeDir = System.getProperty("user.home");
 
     private static final Logger logger = Logger.getLogger(Configuration_fxmlController.class.getName());
     CloudsTable cloudsTable = new CloudsTable();
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    TempDir tempDir = new TempDir();
 
     //Felder und Button für Cloud
     @FXML
@@ -50,9 +53,9 @@ public class Configuration_fxmlController implements Initializable {
 
     @FXML
     private Button openDirChooserButton1, openDirChooserButton2,
-            openDirChooserButton3, openDirChooserButton4;
+            openDirChooserButton3, openDirChooserButton4, openDirChooserButtonTemp;
     @FXML
-    private TextField cloudField0, cloudField1, cloudField2, cloudField3, cloudField4;
+    private TextField cloudField0, cloudField1, cloudField2, cloudField3, cloudField4, tempField;
 
     @FXML
     private Label cloudLabel1, cloudLabel2, cloudLabel3, cloudLabel4;
@@ -83,6 +86,7 @@ public class Configuration_fxmlController implements Initializable {
                 sizeSpinner2.getValueFactory().setValue(cloudsTable.getCloudSize()[2]);
                 sizeSpinner3.getValueFactory().setValue(cloudsTable.getCloudSize()[3]);
                 sizeSpinner4.getValueFactory().setValue(cloudsTable.getCloudSize()[4]);
+                tempField.setText(placeholderPath.replacePlaceholder(tempDir.getTempDir()));
 
             } catch (SQLException ex) {
                 Logger.getLogger(Configuration_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
@@ -108,6 +112,27 @@ public class Configuration_fxmlController implements Initializable {
 
     }
 
+    @FXML
+    public void openDirChooserTemp(ActionEvent e) throws SQLException {
+        Stage stage = new Stage();
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Bitte einen Temp-Ordner auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
+
+        try {
+            selectedDir = dirChooser.showDialog(stage);
+            if (selectedDir.getAbsolutePath() != null) {
+                tempDirPath = selectedDir.getAbsolutePath();
+                tempField.setText(tempDirPath);
+                tempField.setText(tempDirPath);
+
+            }
+        } catch (NullPointerException exception) {
+            tempField.setText("Es wurde kein Temp-Ordner ausgewählt");
+        }
+
+    }
+
     /**
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 0
@@ -119,8 +144,8 @@ public class Configuration_fxmlController implements Initializable {
     public void openDirChooser0(ActionEvent e) throws SQLException {
         Stage stage = new Stage();
         DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Bitte eine Clouds auswähle");
-        dirChooser.setInitialDirectory(new File("C:\\Users\\danvi\\Desktop\\Praktikum"));
+        dirChooser.setTitle("Bitte eine Cloud auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
 
         try {
             selectedDir = dirChooser.showDialog(stage);
@@ -145,8 +170,8 @@ public class Configuration_fxmlController implements Initializable {
     public void openDirChooser1(ActionEvent e) {
         Stage stage = new Stage();
         DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Bitte eine Clouds auswähle");
-        dirChooser.setInitialDirectory(new File("C:\\Users\\danvi\\Desktop\\Praktikum"));
+        dirChooser.setTitle("Bitte eine Cloud auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
         try {
             selectedDir = dirChooser.showDialog(stage);
             if (selectedDir.getAbsolutePath() != null) {
@@ -169,8 +194,8 @@ public class Configuration_fxmlController implements Initializable {
     public void openDirChooser2(ActionEvent e) {
         Stage stage = new Stage();
         DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Bitte eine Clouds auswähle");
-        dirChooser.setInitialDirectory(new File("C:\\Users\\danvi\\Desktop\\Praktikum"));
+        dirChooser.setTitle("Bitte eine Cloud auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
         try {
             selectedDir = dirChooser.showDialog(stage);
             if (selectedDir.getAbsolutePath() != null) {
@@ -193,8 +218,8 @@ public class Configuration_fxmlController implements Initializable {
     public void openDirChooser3(ActionEvent e) {
         Stage stage = new Stage();
         DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Bitte eine Clouds auswähle");
-        dirChooser.setInitialDirectory(new File("C:\\Users\\danvi\\Desktop\\Praktikum"));
+        dirChooser.setTitle("Bitte eine Cloud auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
         try {
             selectedDir = dirChooser.showDialog(stage);
             if (selectedDir.getAbsolutePath() != null) {
@@ -217,8 +242,8 @@ public class Configuration_fxmlController implements Initializable {
     public void openDirChooser4(ActionEvent e) {
         Stage stage = new Stage();
         DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Bitte eine Clouds auswähle");
-        dirChooser.setInitialDirectory(new File("C:\\Users\\danvi\\Desktop\\Praktikum"));
+        dirChooser.setTitle("Bitte eine Cloud auswählen");
+        dirChooser.setInitialDirectory(new File(homeDir));
         try {
             selectedDir = dirChooser.showDialog(stage);
             if (selectedDir.getAbsolutePath() != null) {
@@ -258,9 +283,16 @@ public class Configuration_fxmlController implements Initializable {
         for (int i = 0; i < selectedDirPath.length; i++) {
             if (selectedDirPath[i] != null) {
                 try {
-                    if (!cloudsTable.cloudExists(selectedDirPath[i])) {
+                    if (!cloudsTable.cloudExists(i + 1)) {
                         Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
                         cloudsTable.saveCloud(clouds);
+                    } else {
+                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                        if (!cloudName.equals(selectedDirPath[i])) {
+                            cloudsTable.deleteCloudForReplacement(i + 1);
+                            Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
+                            cloudsTable.saveCloud(clouds);
+                        }
                     }
                 } catch (Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage());
@@ -271,6 +303,13 @@ public class Configuration_fxmlController implements Initializable {
         cloudsTable.updateCloudNumber(spinnerValue);
 
         System.out.println("Anzahl der Clouds: " + cloudsTable.getNumberOfCloudsFromDatabase());
+
+        if (!tempDir.tempDirExists()) {
+            tempDir.saveTempDir(placeholderPath.setPlaceholder(tempDirPath));
+        } else {
+            tempDir.deletetempDirForReplacement();
+            tempDir.saveTempDir(tempDirPath);
+        }
 
         Stage stage = (Stage) confirmConfigButton.getScene().getWindow();
         stage.close();

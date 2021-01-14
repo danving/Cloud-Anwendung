@@ -336,7 +336,7 @@ public class OriginalFileTable {
         try {
             connection = Database.getDBConnection();
             connection.setAutoCommit(false);
-            String query = "SELECT name, date, type, size FROM originalFile";
+            String query = "SELECT name, date, type, size FROM originalfile";
             statement = connection.prepareStatement(query);
             int counter = 1;
             ResultSet resultSet = statement.executeQuery();

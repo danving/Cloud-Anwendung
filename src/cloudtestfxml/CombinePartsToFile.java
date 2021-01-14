@@ -3,6 +3,7 @@ package cloudtestfxml;
 import database.CloudsTable;
 import database.OriginalFileTable;
 import database.PartFilesTable;
+import database.TempDir;
 import java.awt.Desktop;
 import java.io.*;
 import java.nio.channels.Channel;
@@ -24,6 +25,7 @@ public class CombinePartsToFile {
     PartFilesTable partFilesTable = new PartFilesTable();
     OriginalFileTable originalFileTable = new OriginalFileTable();
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    TempDir tempDir = new TempDir();
 
     /**
      * Fügt die Teil-Dateien wieder zusammen,indem chunkweise aus den Teil-Dateien
@@ -37,9 +39,8 @@ public class CombinePartsToFile {
      */
     public void combinePartsToFile(long sizeOfParts[], String name, String type) throws FileNotFoundException, IOException, SQLException {
         final int numberOfParts = partFilesTable.getNumberOfParts(name);
-        //TODO Ordner für temp dateien auswählen lassen? Wo wird datei gespeichert und geöffnet?
-        //Erstellen einer neuen Datei, in der das zusammengefügte reingeschrieben wird
-        File originalFile = new File("C:\\Users\\danvi\\Desktop\\Praktikum\\TestUserOrdner" + "\\" + name + "_Original" + type);
+        String tempDirPath = tempDir.getTempDir();
+        File originalFile = new File(tempDirPath + "\\" + name + "_Original" + type);
         try {
             if (originalFile.createNewFile()) {
                 System.out.println("File created: " + originalFile.getName());
@@ -100,7 +101,6 @@ public class CombinePartsToFile {
         Desktop.getDesktop().open(originalFile);
 
         //Timer der Originaldatei nach 5 sek. wieder löscht
-        //TODO Trigger, wenn Datei geschlossen wird geschlossen
         long timeToSleep = 5L;
         TimeUnit time = TimeUnit.SECONDS;
 
