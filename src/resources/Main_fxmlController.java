@@ -10,6 +10,7 @@ import database.PartFilesTable;
 import cloudtestfxml.MoveFile;
 import cloudtestfxml.PlaceholderPath;
 import database.CloudsTable;
+import database.TempDir;
 import java.io.*;
 import javafx.event.ActionEvent;
 import java.net.URL;
@@ -59,6 +60,7 @@ public class Main_fxmlController extends Thread implements Initializable {
     MoveFile moveFile = new MoveFile();
     FolderHierarchy folderHierarchy = new FolderHierarchy();
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    TempDir tempDir = new TempDir();
 
     public static String fileName = "-";
     public static String filePath = "-";
@@ -119,7 +121,22 @@ public class Main_fxmlController extends Thread implements Initializable {
         }
         //TODO Abfrage über Config
         String homeDir = System.getProperty("user.home");
-        treeViewFile = new File("C:\\Users\\danvi\\Desktop\\Praktikum\\TestUserOrdner");
+        String tempTree = homeDir + "//Desktop";
+        try {
+            if(tempDir.tempDirExists() == true) {
+                try {
+                    tempTree = tempDir.getTempDir();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                tempTree = placeholderPath.replacePlaceholder(tempTree);
+                System.out.println(tempTree);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        treeViewFile = new File(tempTree);
         try {
             treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
         } catch (FileNotFoundException ex) {
@@ -425,7 +442,7 @@ public class Main_fxmlController extends Thread implements Initializable {
         size = (Long.toString(Files.size(Paths.get(filePath))));
         double sizeNext = Double.parseDouble(size);
         sizeNext = Math.ceil(sizeNext / 1000) * 1000;
-        int sizeNextInt = (int)sizeNext / 1000;
+        int sizeNextInt = (int) sizeNext / 1000;
         size = (Integer.toString(sizeNextInt) + " KB");
 
         //Datum
