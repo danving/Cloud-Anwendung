@@ -16,7 +16,7 @@ Programm Installieren
 
 Programm Benutzung
 1. Einstellungen unter Datei -> Einstellungen öffnen.
-2. Einen Temp-Ordner auswählen, in dem Dateien aus den Clouds kurz gespeichert werden, um diese zu öffnen.
+2. Einen Temp-Ordner auswählen, in dem Dateien aus den Clouds kurz gespeichert werden, um diese zu öffnen. Der Temp-Ordner muss auf beiden Rechnern denselben Pfad besitzen!
 3. Mindestens zwei Clouds mit gewünschter Speicherkapazität angeben.
 3. Auswahl bestätigen.
 4. Im Hauptfenster kann nun eine Datei in das untere rechte Feld gezogen werden.
