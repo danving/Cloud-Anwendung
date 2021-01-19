@@ -227,6 +227,7 @@ public class MoveFile {
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(MoveFile.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
                 return false;
             }
@@ -257,6 +258,7 @@ public class MoveFile {
                 int userId = partFilesTable.savePartFile(partFiles);
             } catch (Exception exception) {
                 logger.log(Level.SEVERE, exception.getMessage());
+                exception.printStackTrace();
             }
         }
 

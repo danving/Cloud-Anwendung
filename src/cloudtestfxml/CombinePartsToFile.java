@@ -40,6 +40,7 @@ public class CombinePartsToFile {
     public void combinePartsToFile(long sizeOfParts[], String name, String type) throws FileNotFoundException, IOException, SQLException {
         final int numberOfParts = partFilesTable.getNumberOfParts(name);
         String tempDirPath = tempDir.getTempDir();
+        tempDirPath = placeholderPath.replacePlaceholder(tempDirPath);
         File originalFile = new File(tempDirPath + "\\" + name + "_Original" + type);
         try {
             if (originalFile.createNewFile()) {
@@ -49,6 +50,7 @@ public class CombinePartsToFile {
             }
         } catch (IOException ex) {
             Logger.getLogger(CombinePartsToFile.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         //String Array für die Teil-Pfade
@@ -108,6 +110,7 @@ public class CombinePartsToFile {
             time.sleep(timeToSleep);
         } catch (InterruptedException e) {
             System.out.println("Interrupted");
+            e.printStackTrace();
         }
 
         if (isFileClosed(originalFile)) {
@@ -128,14 +131,15 @@ public class CombinePartsToFile {
         try {
             channel = new RandomAccessFile(file, "rw").getChannel();
             closed = true;
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             closed = false;
+            ex.printStackTrace();
         } finally {
             if (channel != null) {
                 try {
                     channel.close();
                 } catch (IOException ex) {
-                    // exception handling
+                    ex.printStackTrace();
                 }
             }
         }

@@ -43,6 +43,7 @@ public class TempDir {
 
         } catch (SQLException exception) {
             logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
         } finally {
             if (null != statement) {
                 statement.close();
@@ -77,6 +78,7 @@ public class TempDir {
             }
         } catch (SQLException exception) {
             logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
         } finally {
             if (null != statement) {
                 statement.close();
@@ -116,6 +118,7 @@ public class TempDir {
 
         } catch (SQLException exception) {
             logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
             if (null != connection) {
                 connection.rollback();
             }

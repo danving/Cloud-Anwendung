@@ -1,0 +1,24 @@
+Cloud-Ordner auf Rechner installieren
+1. Die GoogleDrive Cloud muss installiert werden, da sie die Datenbank enthält
+2. OneDrive und Dropbox sind optional, können aber verwendet werden
+3. sonst kann jede beliebe andere Cloud verwendet werden
+4. OneDrive bitte unter "C:\Users\"username"\OneDrive-Cloud\OneDrive" speichern und "username" ersetzten
+5. Anmeldedaten für die 3 Clouds: Name: cloudtestuser.00@gmail.com; Passwort: HalloCloudUser0011
+
+
+Programm Installieren
+1. Ordner "Cloud Programm" runterladen (beinhaltet die Cloud.exe und einen lib-Ordner)
+2. WICHTIG: Darauf achten, dass die .exe und der Ordner in dem gleichen Ordner liegen
+3. Es kann sein, dass die Datei, sich nicht öffnen lässt, da vermutet wird, dass es sich um ein Virus handelt -> Berechtigung erteilen
+4. Datei öffnen
+
+
+
+Programm Benutzung
+1. Einstellungen unter Datei -> Einstellungen öffnen.
+2. Einen Temp-Ordner auswählen, in dem Dateien aus den Clouds kurz gespeichert werden, um diese zu öffnen.
+3. Mindestens zwei Clouds mit gewünschter Speicherkapazität angeben.
+3. Auswahl bestätigen.
+4. Im Hauptfenster kann nun eine Datei in das untere rechte Feld gezogen werden.
+5. Auf "Verschieben" drücken, um die ausgewählte Datei in die Cloud zu verschieben.
+6. In der Tabelle darüber werden alle Dateien angezeigt, die bisher in der Cloud gespeichert wurden. Um diese zu öffen, Doppelklick auf die gewünschte Datei.

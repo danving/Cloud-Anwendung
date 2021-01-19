@@ -20,7 +20,8 @@ public class Database {
      */
     private static final Database dbcontroller = new Database();
     private static Connection connection;
-    private static final String DB_PATH = "jdbc:sqlite:C:\\Users\\danvi\\OneDrive - informatik.hs-fulda.de\\Test\\cloudDatenbank.s3db";
+    private static String homeDir = System.getProperty("user.home");
+    private static final String DB_PATH = "jdbc:sqlite:" + homeDir + "\\Google Drive\\Test\\Datenbank_NICHT_ANFASSEN\\cloudDatenbank-LAPTOP-0CF8DLKU.s3db";
 
     static {
         try {
@@ -69,13 +70,14 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
 
         } catch (ClassNotFoundException exception) {
-            
+            exception.printStackTrace();
         }
 
         try {
             connection = DriverManager.getConnection(DB_PATH);
             return connection;
         } catch (SQLException exception) {
+            exception.printStackTrace();
         }
         
 

@@ -31,6 +31,8 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
+        String homeDir = System.getProperty("user.home");
+        System.out.println("jdbc:sqlite:" + homeDir + "\\OneDrive - informatik.hs-fulda.de\\Test\\cloudDatenbank.s3db");
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/resources/Main_fxml.fxml"));
         Parent content = loader.load();
 

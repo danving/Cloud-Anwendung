@@ -113,6 +113,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                     addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
                 } catch (SQLException ex) {
                     Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
         }
@@ -123,6 +124,7 @@ public class Main_fxmlController extends Thread implements Initializable {
             treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
     }
@@ -347,8 +349,10 @@ public class Main_fxmlController extends Thread implements Initializable {
 
         } catch (SQLException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
     }

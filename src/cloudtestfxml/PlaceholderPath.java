@@ -23,7 +23,7 @@ public class PlaceholderPath {
                 if (path.substring(i, i + 15).equals("Homeverzeichnis")) {
                     for (int j = i + 6; j < path.length(); j++) {
                         if (path.charAt(j) == '\\') {
-                            cloudPlaceholder = homeDir + "\\" + path.substring(j);
+                            cloudPlaceholder = homeDir + "\\" + path.substring(j+1);
                             System.out.println(cloudPlaceholder);
                             path = cloudPlaceholder;
                             break;

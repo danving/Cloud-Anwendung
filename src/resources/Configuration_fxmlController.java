@@ -97,10 +97,12 @@ public class Configuration_fxmlController implements Initializable {
 
             } catch (SQLException ex) {
                 Logger.getLogger(Configuration_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
 
         } catch (SQLException ex) {
             Logger.getLogger(Configuration_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         checkNumberOfClouds(spinnerValue);
 
@@ -136,6 +138,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             tempField.setText("Es wurde kein Temp-Ordner ausgewählt");
+            exception.printStackTrace();
         }
 
     }
@@ -163,6 +166,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField0.setText("Es wurde keine Cloud ausgewählt");
+            exception.printStackTrace();
         }
 
     }
@@ -188,6 +192,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField1.setText("Es wurde keine Cloud ausgewählt");
+            exception.printStackTrace();
         }
     }
 
@@ -212,6 +217,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField2.setText("Es wurde keine Cloud ausgewählt");
+            exception.printStackTrace();
         }
     }
 
@@ -236,6 +242,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField3.setText("Es wurde keine Cloud ausgewählt");
+            exception.printStackTrace();
         }
     }
 
@@ -260,6 +267,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField4.setText("Es wurde keine Cloud ausgewählt");
+            exception.printStackTrace();
         }
     }
 
@@ -279,6 +287,7 @@ public class Configuration_fxmlController implements Initializable {
             check = true;
         }
          */
+        //TODO nicht string überprüfen, sondern textfeld
         if (tempDirPath != null && selectedDirPath[0] != null && selectedDirPath[1] != null) {
             check = true;
         }
@@ -316,6 +325,7 @@ public class Configuration_fxmlController implements Initializable {
                         }
                     } catch (Exception exception) {
                         logger.log(Level.SEVERE, exception.getMessage());
+                        exception.printStackTrace();
                     }
                 }
             }
