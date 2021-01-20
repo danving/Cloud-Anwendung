@@ -50,7 +50,6 @@ public class CombinePartsToFile {
             }
         } catch (IOException ex) {
             Logger.getLogger(CombinePartsToFile.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
         }
 
         //String Array für die Teil-Pfade
@@ -110,7 +109,6 @@ public class CombinePartsToFile {
             time.sleep(timeToSleep);
         } catch (InterruptedException e) {
             System.out.println("Interrupted");
-            e.printStackTrace();
         }
 
         if (isFileClosed(originalFile)) {
@@ -133,13 +131,11 @@ public class CombinePartsToFile {
             closed = true;
         } catch (FileNotFoundException ex) {
             closed = false;
-            ex.printStackTrace();
         } finally {
             if (channel != null) {
                 try {
                     channel.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
                 }
             }
         }

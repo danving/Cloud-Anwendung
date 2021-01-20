@@ -9,11 +9,6 @@ import java.math.BigDecimal;
 import java.nio.file.*;
 import java.sql.SQLException;
 import java.util.logging.*;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 /**
  * Die Klasse MoveFile verschiebt Dateien in die Cloud. Dabei wird die
  * Originaldatei des Anwenders in die Anzahl der Clouds geteilt, diese Teile
@@ -85,24 +80,24 @@ public class MoveFile {
 
         //Berechnen Größe der Teil-Dateien in Abhängigkeit von den Cloud-Kapazitäten und der Dateigröße
         filePath = placeholderPath.replacePlaceholder(filePath);
-        RandomAccessFile file = new RandomAccessFile(filePath, "r");
-        long sourceSize = file.length();
-
-        for (int i = 0; i < sizePerPart.length; i++) {
-            sizePerPartDouble[i] = (double) sourceSize * (percentPerCloud[i] / 100);
-            //System.out.println(sizePerPartDouble[i]);
-            BigDecimal temp = (new BigDecimal(sizePerPartDouble[i])).remainder(BigDecimal.ONE);
-            fractionalPart[i] = temp.doubleValue();
-            rest += fractionalPart[i];
-            sizePerPart[i] = (long) sizePerPartDouble[i];
-            //System.out.println("Kommastelle " + fractionalPart[i]);
-            //System.out.println("gerundet " + sizePerPart[i]);
+        try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
+            long sourceSize = file.length();
+            
+            for (int i = 0; i < sizePerPart.length; i++) {
+                sizePerPartDouble[i] = (double) sourceSize * (percentPerCloud[i] / 100);
+                //System.out.println(sizePerPartDouble[i]);
+                BigDecimal temp = (new BigDecimal(sizePerPartDouble[i])).remainder(BigDecimal.ONE);
+                fractionalPart[i] = temp.doubleValue();
+                rest += fractionalPart[i];
+                sizePerPart[i] = (long) sizePerPartDouble[i];
+                //System.out.println("Kommastelle " + fractionalPart[i]);
+                //System.out.println("gerundet " + sizePerPart[i]);
+            }
+            sizePerPart[0] += (long) rest;
+            for (int i = 0; i < sizePerPart.length; i++) {
+                //System.out.println("Finale Größe der Parts: " + sizePerPart[i]);
+            }
         }
-        sizePerPart[0] += (long) rest;
-        for (int i = 0; i < sizePerPart.length; i++) {
-            //System.out.println("Finale Größe der Parts: " + sizePerPart[i]);
-        }
-        file.close();
         return sizePerPart;
 
     }
@@ -139,9 +134,10 @@ public class MoveFile {
             for (int part = 0; part < numberOfParts; part++) {
                 out[part] = new BufferedOutputStream(new FileOutputStream(outPath[part]));
             }
-            RandomAccessFile file = new RandomAccessFile(filePath, "r");
-            long sourceSize = file.length();
-            file.close();
+            long sourceSize;
+            try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
+                sourceSize = file.length();
+            }
             byte[] buf = new byte[4096]; //Standard Chunk-Größe 4KiB 4096
             /*Wenn die Datei-Größe größer ist, als die Standard Chunk-Größe * die Anzahl der
             zu verwendenen Clouds, dann soll die Standard Chunk-Größe verwendet werden
@@ -227,7 +223,6 @@ public class MoveFile {
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(MoveFile.class.getName()).log(Level.SEVERE, null, ex);
-                    ex.printStackTrace();
                 }
                 return false;
             }
@@ -256,9 +251,8 @@ public class MoveFile {
             try {
                 PartFiles partFiles = this.createPartFileObject(originalFileTable.getLastEntryId() + i, originalFileTable.getLastEntryName(), partsPath[i], i + 1, sizePerPart[i], chunkSize);
                 int userId = partFilesTable.savePartFile(partFiles);
-            } catch (Exception exception) {
+            } catch (SQLException exception) {
                 logger.log(Level.SEVERE, exception.getMessage());
-                exception.printStackTrace();
             }
         }
 

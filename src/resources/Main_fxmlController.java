@@ -115,11 +115,10 @@ public class Main_fxmlController extends Thread implements Initializable {
                     addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
                 } catch (SQLException ex) {
                     Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-                    ex.printStackTrace();
                 }
             }
         }
-        //TODO Abfrage über Config
+        /*
         String homeDir = System.getProperty("user.home");
         String tempTree = homeDir + "//Desktop";
         try {
@@ -141,8 +140,8 @@ public class Main_fxmlController extends Thread implements Initializable {
             treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
         }
+        */
 
     }
 
@@ -164,7 +163,6 @@ public class Main_fxmlController extends Thread implements Initializable {
             stage.showAndWait();
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
@@ -289,7 +287,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                     addTableViewEntry(originalFileTable.getLastEntryName(), originalFileTable.getLastEntryDate(), originalFileTable.getLastEntryType(), originalFileTable.getLastEntrySize());
                     droppedPathLabel.setText("-");
                     filePath = null;
-                    treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
+                    //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
 
                     //Datei existier bereits, Anwender wird in einem Dialog gefragt, ob Datei ersetzt werden soll
                 } else {
@@ -303,7 +301,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                         stage.showAndWait();
 
                     } catch (IOException ex) {
-                        ex.printStackTrace();
                     }
                     ReplaceDialog_fxmlController dialog = new ReplaceDialog_fxmlController();
                     synchronized (dialog) {
@@ -312,7 +309,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                                 dialog.wait();
                             }
                         } catch (InterruptedException inE) {
-                            inE.printStackTrace();
                         }
                     }
                     //Wenn Datei ersetzt werden soll
@@ -356,7 +352,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                             }
 
                             addTableViewEntry(originalFileTable.getLastEntryName(), originalFileTable.getLastEntryDate(), originalFileTable.getLastEntryType(), originalFileTable.getLastEntrySize());
-                            treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
+                            //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
                         }
                     }
 
@@ -364,12 +360,8 @@ public class Main_fxmlController extends Thread implements Initializable {
                 droppedPathLabel.setText("-");
             }
 
-        } catch (SQLException ex) {
+        } catch (SQLException | IOException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
         }
 
     }

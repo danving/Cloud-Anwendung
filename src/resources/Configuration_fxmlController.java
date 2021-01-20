@@ -97,7 +97,6 @@ public class Configuration_fxmlController implements Initializable {
 
             } catch (SQLException ex) {
                 Logger.getLogger(Configuration_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-                ex.printStackTrace();
             }
 
         } catch (SQLException ex) {
@@ -138,7 +137,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             tempField.setText("Es wurde kein Temp-Ordner ausgewählt");
-            exception.printStackTrace();
+
         }
 
     }
@@ -166,7 +165,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField0.setText("Es wurde keine Cloud ausgewählt");
-            exception.printStackTrace();
+
         }
 
     }
@@ -176,7 +175,6 @@ public class Configuration_fxmlController implements Initializable {
      * Textfeld 1
      *
      * @param e
-     * @throws SQLException
      */
     public void openDirChooser1(ActionEvent e) {
         Stage stage = new Stage();
@@ -192,7 +190,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField1.setText("Es wurde keine Cloud ausgewählt");
-            exception.printStackTrace();
+
         }
     }
 
@@ -201,7 +199,6 @@ public class Configuration_fxmlController implements Initializable {
      * Textfeld 2
      *
      * @param e
-     * @throws SQLException
      */
     public void openDirChooser2(ActionEvent e) {
         Stage stage = new Stage();
@@ -217,7 +214,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField2.setText("Es wurde keine Cloud ausgewählt");
-            exception.printStackTrace();
+
         }
     }
 
@@ -226,7 +223,6 @@ public class Configuration_fxmlController implements Initializable {
      * Textfeld 3
      *
      * @param e
-     * @throws SQLException
      */
     public void openDirChooser3(ActionEvent e) {
         Stage stage = new Stage();
@@ -242,7 +238,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField3.setText("Es wurde keine Cloud ausgewählt");
-            exception.printStackTrace();
+
         }
     }
 
@@ -251,7 +247,6 @@ public class Configuration_fxmlController implements Initializable {
      * Textfeld 4
      *
      * @param e
-     * @throws SQLException
      */
     public void openDirChooser4(ActionEvent e) {
         Stage stage = new Stage();
@@ -267,7 +262,7 @@ public class Configuration_fxmlController implements Initializable {
             }
         } catch (NullPointerException exception) {
             cloudField4.setText("Es wurde keine Cloud ausgewählt");
-            exception.printStackTrace();
+
         }
     }
 
@@ -276,19 +271,21 @@ public class Configuration_fxmlController implements Initializable {
      * Speicherkapazität in die Datenbank und schließt das Fenster
      *
      * @param e
+     * @throws SQLException
+     * @throws IOException
      */
     @FXML
     public void confirmConfig(ActionEvent e) throws SQLException, IOException {
-        boolean check = false;
-        /*
-        if (tempField.getText().equals("") || tempField.getText().equals("Es wurde kein Temp-Ordner ausgewählt")
-                || cloudField0.getText().equals("") || cloudField0.getText().equals("Es wurde keine Cloud ausgewählt")
-                || cloudField1.getText().equals("") || cloudField1.getText().equals("Es wurde keine Cloud ausgewählt")) {
-            check = true;
-        }
-         */
-        //TODO nicht string überprüfen, sondern textfeld
-        if (tempDirPath != null && selectedDirPath[0] != null && selectedDirPath[1] != null) {
+        boolean check;
+        String temp1, temp2, temp3;
+        temp1 = tempField.getText();
+        temp2 = cloudField0.getText();
+        temp3 = cloudField1.getText();
+
+        if (temp1.equals("Es wurde kein Temp-Ordner ausgewählt") || temp1.equals("") || temp2.equals("Es wurde keine Cloud ausgewählt") || temp2.equals("")
+                || temp3.equals("Es wurde keine Cloud ausgewählt") || temp3.equals("")) {
+            check = false;
+        } else {
             check = true;
         }
 
@@ -323,9 +320,8 @@ public class Configuration_fxmlController implements Initializable {
                                 cloudsTable.saveCloud(clouds);
                             }
                         }
-                    } catch (Exception exception) {
+                    } catch (SQLException exception) {
                         logger.log(Level.SEVERE, exception.getMessage());
-                        exception.printStackTrace();
                     }
                 }
             }
