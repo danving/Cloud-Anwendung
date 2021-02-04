@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="250.0" prefWidth="450.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="resources.ReplaceCloudDialog_fxmlController">
+    <stylesheets>
+        <URL value="@main_fxml.css" />
+    </stylesheets>
+    <children>
+        <Label layoutX="39.0" layoutY="39.0" text="Sie haben Änderungen in den Einstellungen vorgenommen. ">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <Button fx:id="deleteContentButton" layoutX="85.0" layoutY="153.0" mnemonicParsing="false" onAction="#deleteContent" text=" Inhalt löschen" />
+        <Button fx:id="moveContentButton" layoutX="252.0" layoutY="153.0" mnemonicParsing="false" onAction="#moveContent" text="Inhalt verschieben" />
+        <Button fx:id="closeDialogButton" layoutX="178.0" layoutY="199.0" mnemonicParsing="false" onAction="#closeDialog" text="Abbrechen" />
+      <Label layoutX="20.0" layoutY="65.0" text="Die neuen Einstellungen könnten sich auf den Inhalt in den Clouds">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="105.0" layoutY="91.0" text="auswirken. Wie wollen sie vorgehen?">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      
+    </children>
+</AnchorPane>

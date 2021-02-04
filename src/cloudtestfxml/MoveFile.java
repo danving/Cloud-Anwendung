@@ -237,8 +237,7 @@ public class MoveFile {
             directoryPath = new File(temp);
             File filesList[] = directoryPath.listFiles(textFilefilter);
             //TODO bei manchen pdf bricht er ab?? index out ouf bounds
-            //FEHLER: Manchmal nimmt er alle Dateien aus den Ordnern - Filter funktioniert nicht??
-            System.out.println("List of the text files in the specified directory:" + filesList.length);
+            //System.out.println("List of the text files in the specified directory:" + filesList.length);
             for (File files : filesList) {
                 partsPath[j] = files.getAbsolutePath();
                 j++;

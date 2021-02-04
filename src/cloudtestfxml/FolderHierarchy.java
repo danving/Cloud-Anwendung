@@ -24,7 +24,7 @@ public class FolderHierarchy {
         //FileInputStream fileInput = new FileInputStream("resources.image.file.png");
         TreeItem<String> root = new TreeItem<>(directory.getName());
         for(File f : directory.listFiles()) {
-            System.out.println("Loading " + f.getName());
+            //System.out.println("Loading " + f.getName());
             if(f.isDirectory()) { //Then we call the function recursively
                 root.getChildren().addAll(displayFolderTreeView(f));
             } else {

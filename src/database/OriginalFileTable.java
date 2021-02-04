@@ -111,6 +111,40 @@ public class OriginalFileTable {
 
         return 0;
     }
+    
+    /**
+     * Gibt die Gesamzanzahl der Dateien zurück, die in die Clouds
+     * verschoben wurden.
+     * @return
+     * @throws SQLException 
+     */
+    public int getNumberOfFiles() throws SQLException {
+        int number = 0;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "SELECT COUNT(*) FROM originalfile";
+            statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                number = resultSet.getInt(1);
+            }
+        }catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+        return number;
+    }
 
     /**
      * Gibt den Letzten Pfad einer Datei zurück, der in die Datenbank eingefügt
@@ -372,6 +406,41 @@ public class OriginalFileTable {
         */
         return filesList;
     }
+    
+    /**
+     * Gibt den Typ der gewünschten Datei zurück
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
+    public String getTypeOfFile(String id) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        String type = "";
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "SELECT type FROM originalfile WHERE name = ?";
+            statement = connection.prepareStatement(query);
+            int counter = 1;
+            statement.setString(counter++, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                type = resultSet.getString("type");
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+        return type;
+    }
 
     /**
      * Gibt die Checksumme der gewünschten Datei zurück
@@ -410,10 +479,10 @@ public class OriginalFileTable {
     /**
      * Löscht einen gewünschten Eintrag in der Datenbank
      *
-     * @param id Name der zu löschenden Datei
+     * @param name Name der zu löschenden Datei
      * @throws SQLException
      */
-    public void deleteOriginalFile(String id) throws SQLException {
+    public void deleteOriginalFile(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
@@ -421,7 +490,7 @@ public class OriginalFileTable {
             connection.setAutoCommit(false);
             String query = "DELETE FROM originalFile WHERE name = ?";
             statement = connection.prepareStatement(query);
-            statement.setString(1, id);
+            statement.setString(1, name);
             statement.executeUpdate();
             if (!connection.getAutoCommit()) {
                 connection.commit();
@@ -437,6 +506,38 @@ public class OriginalFileTable {
                 connection.close();
             }
         }
+    }
+    
+    /**
+     * Löscht alle Einträge aus der Datenbank
+     *
+     * @throws SQLException
+     */
+    public void deleteAllFiles() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "DELETE FROM originalfile";
+            statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+
     }
 
 }

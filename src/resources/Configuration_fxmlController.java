@@ -1,15 +1,26 @@
 package resources;
 
+import cloudtestfxml.CombinePartsToFile;
+import cloudtestfxml.MoveFile;
 import cloudtestfxml.PlaceholderPath;
 import database.Clouds;
 import database.CloudsTable;
+import database.OriginalFile;
+import database.OriginalFileTable;
+import database.PartFilesTable;
 import database.TempDir;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,19 +42,30 @@ import javafx.stage.Stage;
  */
 public class Configuration_fxmlController implements Initializable {
 
+    public String newCloud;
+
     File selectedDir;
-    String selectedDirPath[] = new String[6];
+    String selectedDirPath[] = new String[5];
     int cloudSize[] = new int[5];
     TextField textfield[] = new TextField[10];
     int spinnerValue;
-    int i = 1;
+    //int i = 1;
     String tempDirPath;
     String homeDir = System.getProperty("user.home");
 
     private static final Logger logger = Logger.getLogger(Configuration_fxmlController.class.getName());
     CloudsTable cloudsTable = new CloudsTable();
+    OriginalFileTable originalfile = new OriginalFileTable();
+    PartFilesTable partfiles = new PartFilesTable();
+    CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
+    MoveFile moveFile = new MoveFile();
     PlaceholderPath placeholderPath = new PlaceholderPath();
     TempDir tempDir = new TempDir();
+    Main_fxmlController mainController = new Main_fxmlController();
+    //Boolean für ReplaceCloudDialog
+    public static boolean waitingReplaceCloud = false;
+    //TODO auf false setzten
+    public boolean deleteTableView = true;
 
     //Felder und Button für Cloud
     @FXML
@@ -136,7 +158,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            tempField.setText("Es wurde kein Temp-Ordner ausgewählt");
+            //tempField.setText("Es wurde kein Temp-Ordner ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
 
@@ -164,7 +187,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            cloudField0.setText("Es wurde keine Cloud ausgewählt");
+            //cloudField0.setText("Es wurde keine Cloud ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
 
@@ -189,7 +213,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            cloudField1.setText("Es wurde keine Cloud ausgewählt");
+            // cloudField1.setText("Es wurde keine Cloud ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
     }
@@ -213,7 +238,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            cloudField2.setText("Es wurde keine Cloud ausgewählt");
+            //cloudField2.setText("Es wurde keine Cloud ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
     }
@@ -237,7 +263,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            cloudField3.setText("Es wurde keine Cloud ausgewählt");
+            //cloudField3.setText("Es wurde keine Cloud ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
     }
@@ -261,7 +288,8 @@ public class Configuration_fxmlController implements Initializable {
 
             }
         } catch (NullPointerException exception) {
-            cloudField4.setText("Es wurde keine Cloud ausgewählt");
+            //cloudField4.setText("Es wurde keine Cloud ausgewählt");
+            System.out.println("Es wurde kein Temp-Ordner ausgewählt");
 
         }
     }
@@ -275,12 +303,29 @@ public class Configuration_fxmlController implements Initializable {
      * @throws IOException
      */
     @FXML
-    public void confirmConfig(ActionEvent e) throws SQLException, IOException {
+    public void confirmConfig(ActionEvent e) throws SQLException, IOException, FileNotFoundException, NoSuchAlgorithmException {
         boolean check;
         String temp1, temp2, temp3;
         temp1 = tempField.getText();
         temp2 = cloudField0.getText();
         temp3 = cloudField1.getText();
+
+        //String array mit Pfaden 
+        String[] allDirPaths = new String[selectedDirPath.length];
+        String[] tempTextField = new String[selectedDirPath.length];
+        tempTextField[0] = cloudField0.getText();
+        tempTextField[1] = cloudField1.getText();
+        tempTextField[2] = cloudField2.getText();
+        tempTextField[3] = cloudField3.getText();
+        tempTextField[4] = cloudField4.getText();
+        for (int i = 0; i < allDirPaths.length; i++) {
+            if (selectedDirPath[i] != null) {
+                allDirPaths[i] = selectedDirPath[i];
+            } else if (!tempTextField[i].equals("")) {
+                allDirPaths[i] = tempTextField[i];
+            }
+
+        }
 
         if (temp1.equals("Es wurde kein Temp-Ordner ausgewählt") || temp1.equals("") || temp2.equals("Es wurde keine Cloud ausgewählt") || temp2.equals("")
                 || temp3.equals("Es wurde keine Cloud ausgewählt") || temp3.equals("")) {
@@ -306,30 +351,152 @@ public class Configuration_fxmlController implements Initializable {
                 cloudSize[4] = (int) sizeSpinner4.getValue();
             }
 
-            for (int i = 0; i < selectedDirPath.length; i++) {
-                if (selectedDirPath[i] != null) {
+            int numberOfPaths = 0;
+            for (int i = 0; i < allDirPaths.length; i++) {
+                if (allDirPaths[i] != null) {
+                    numberOfPaths += 1;
+                }
+            }
+            int numberOfClouds = cloudsTable.getNumberOfCloudsFromDatabase();
+            if (numberOfClouds == 0) {
+                for (int i = 0; i < numberOfPaths; i++) {
+                    Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
+                    cloudsTable.saveCloud(clouds);
+                }
+            } else if (numberOfPaths < numberOfClouds || numberOfPaths == numberOfClouds) {
+                Parent rootReplace;
+                try {
+                    FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("ReplaceCloudDialog_fxml.fxml"));
+                    rootReplace = loader.load();
+                    Stage stage = new Stage();
+                    stage.setTitle("Einstellungen wurden verändert");
+                    stage.setScene(new Scene(rootReplace, 450, 250));
+                    stage.showAndWait();
+
+                } catch (IOException ex) {
+                    System.out.println("Dialog is not opening");
+                }
+                ReplaceCloudDialog_fxmlController dialog = new ReplaceCloudDialog_fxmlController();
+                synchronized (dialog) {
                     try {
-                        if (!cloudsTable.cloudExists(i + 1)) {
-                            Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
-                            cloudsTable.saveCloud(clouds);
-                        } else {
-                            String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                            if (!cloudName.equals(selectedDirPath[i])) {
-                                cloudsTable.deleteCloudForReplacement(i + 1);
-                                Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
-                                cloudsTable.saveCloud(clouds);
-                            }
+                        while (waitingReplaceCloud) {
+                            dialog.wait();
                         }
-                    } catch (SQLException exception) {
-                        logger.log(Level.SEVERE, exception.getMessage());
+                    } catch (InterruptedException inE) {
+                        System.out.println("No Sync");
+                    }
+                }
+
+                //System.out.println(dialog.deleteContent);
+                if (dialog.deleteContent) { //Content mit Cloud löschen
+                    for (int i = 0; i < numberOfPaths; i++) {
+                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                        if (!cloudName.equals(allDirPaths[i])) {
+                            cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
+                        }
+                    }
+                    if (partfiles.getNumberOfParts() > 0) {
+                        deleteOldCloudContent();
+                    }
+
+                    cloudsTable.deleteCloudFromDatabase(spinnerValue);
+                    cloudsTable.updateCloudNumber(spinnerValue);
+                    mainController.deleteTableView();
+                    
+                    synchronized (this) {
+                        Main_fxmlController.waitDeleteTableView = true;
+                        deleteTableView = true;
+                        notify();
+                        Main_fxmlController.waitDeleteTableView = false;
+                    }
+
+                } else if (dialog.moveContent) {
+                    //Content verschieben
+                    for (int i = 0; i < numberOfPaths; i++) {
+                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                        if (!cloudName.equals(allDirPaths[i])) {
+                            cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
+                        }
+                    }
+                    cloudsTable.deleteCloudFromDatabase(spinnerValue);
+                    cloudsTable.updateCloudNumber(spinnerValue);
+                    if (partfiles.getNumberOfParts() > 0) {
+                        moveOldCloudContent();
+                    }
+                    //TODO tabelle aktualisieren
+
+                }
+                //Wenn eine weitere Cloud hinzugefügt wurde
+            } else if (numberOfPaths > numberOfClouds) {
+                Parent rootReplace;
+                try {
+                    FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("ReplaceCloudDialog_fxml.fxml"));
+                    rootReplace = loader.load();
+                    Stage stage = new Stage();
+                    stage.setTitle("Einstellungen wurden verändert");
+                    stage.setScene(new Scene(rootReplace, 450, 250));
+                    stage.showAndWait();
+
+                } catch (IOException ex) {
+                    System.out.println("Dialog is not opening");
+                }
+                ReplaceCloudDialog_fxmlController dialog = new ReplaceCloudDialog_fxmlController();
+                synchronized (dialog) {
+                    try {
+                        while (waitingReplaceCloud) {
+                            dialog.wait();
+                        }
+                    } catch (InterruptedException inE) {
+                        System.out.println("No Sync");
+                    }
+                }
+                if (dialog.deleteContent) { //Content mit Cloud löschen
+                    for (int i = 0; i < numberOfClouds; i++) {
+                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                        if (!cloudName.equals(allDirPaths[i])) {
+                            cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
+                        }
+                    }
+                    for (int i = numberOfClouds; i < numberOfPaths; i++) {
+                        Clouds clouds = createCloudsObject(allDirPaths[i], i + 1, cloudSize[i], spinnerValue);
+                        cloudsTable.saveCloud(clouds);
+                    }
+                    if (partfiles.getNumberOfParts() > 0) {
+                        deleteOldCloudContent();
+                    }
+                    cloudsTable.updateCloudNumber(spinnerValue);
+                    mainController.deleteTableView();
+                    
+                    synchronized (this) {
+                        Main_fxmlController.waitDeleteTableView = true;
+                        deleteTableView = true;
+                        notify();
+                        Main_fxmlController.waitDeleteTableView = false;
+                    }
+                    
+                } else if (dialog.moveContent) {
+                    for (int i = 0; i < numberOfClouds; i++) {
+                        String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
+                        if (!cloudName.equals(allDirPaths[i])) {
+                            cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
+                        }
+                    }
+                    for (int i = numberOfClouds; i < numberOfPaths; i++) {
+                        Clouds clouds = createCloudsObject(allDirPaths[i], i + 1, cloudSize[i], spinnerValue);
+                        cloudsTable.saveCloud(clouds);
+                    }
+                    cloudsTable.deleteCloudFromDatabase(spinnerValue);
+                    cloudsTable.updateCloudNumber(spinnerValue);
+                    if (partfiles.getNumberOfParts() > 0) {
+                        moveOldCloudContent();
                     }
                 }
             }
+
             cloudsTable.deleteCloudFromDatabase(spinnerValue);
             cloudsTable.updateCloudNumber(spinnerValue);
 
-            System.out.println("Anzahl der Clouds: " + cloudsTable.getNumberOfCloudsFromDatabase());
-
+            //System.out.println("Anzahl der Clouds: " + cloudsTable.getNumberOfCloudsFromDatabase());
             if (tempDirPath != null) {
                 if (!tempDir.tempDirExists()) {
                     tempDir.saveTempDir(placeholderPath.setPlaceholder(tempDirPath));
@@ -338,8 +505,10 @@ public class Configuration_fxmlController implements Initializable {
                     tempDir.saveTempDir(tempDirPath);
                 }
             }
+            
             Stage stage = (Stage) confirmConfigButton.getScene().getWindow();
             stage.close();
+            
         } else {
             Parent root;
             FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("ConfigDialog_fxml.fxml"));
@@ -358,7 +527,8 @@ public class Configuration_fxmlController implements Initializable {
      * @param e
      */
     @FXML
-    public void closeConfig(ActionEvent e) {
+    public void closeConfig(ActionEvent e
+    ) {
         Stage stage = (Stage) closeConfigButton.getScene().getWindow();
         stage.close();
     }
@@ -472,4 +642,162 @@ public class Configuration_fxmlController implements Initializable {
                 break;
         }
     }
+
+    /**
+     * Verschiebt den alten Inhalt der alten Cloud in die neue Cloud
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws NoSuchAlgorithmException
+     */
+    public void moveOldCloudContent() throws SQLException, IOException, FileNotFoundException, NoSuchAlgorithmException {
+        String tempDirPath = tempDir.getTempDir();
+        tempDirPath = placeholderPath.replacePlaceholder(tempDirPath);
+
+        String[] namesOfFiles = partfiles.getNamesOfParts();
+        String[] typesOfFiles = new String[namesOfFiles.length];
+        for (int i = 0; i < namesOfFiles.length; i++) {
+            typesOfFiles[i] = originalfile.getTypeOfFile(namesOfFiles[i]);
+            System.out.println("types: " + typesOfFiles[i]);
+        }
+        //Alte Datei-Inforamtionen aus DB löschen
+
+        String[] pathsOfFiles = new String[partfiles.getNumberOfParts()];
+        for (int j = 0; j < pathsOfFiles.length; j++) {
+            pathsOfFiles = partfiles.getPartsPath();
+
+        }
+        for (int j = 0; j < pathsOfFiles.length; j++) {
+            pathsOfFiles[j] = placeholderPath.replacePlaceholder(pathsOfFiles[j]);
+        }
+        originalfile.deleteAllFiles();
+
+        //Cloud ersetzten
+        //Alte Teil dateien zusammenfügen
+        for (int j = 0; j < namesOfFiles.length; j++) {
+            combinePartsToFile.combinePartsToFile(partfiles.getPartsSize(namesOfFiles[j]), namesOfFiles[j], typesOfFiles[j], false);
+            File combinedFile = new File(tempDirPath + "\\" + namesOfFiles[j] + "_Original" + typesOfFiles[j]);
+            File newFileName = new File(tempDirPath + "\\" + namesOfFiles[j] + typesOfFiles[j]);
+            if (combinedFile.renameTo(newFileName)) {
+                System.out.println("File rename succsess");
+            } else {
+                System.out.println("File rename failed");
+            }
+            OriginalFile newFile = createFileObject(newFileName.toString());
+            originalfile.saveOriginalFile(newFile);
+            String[] pathsToDelete = partfiles.getPartsPathPerName(namesOfFiles[j]);
+            for (int i = 0; i < pathsToDelete.length; i++) {
+                if (pathsToDelete[i] != null) {
+                    pathsToDelete[i] = placeholderPath.replacePlaceholder(pathsToDelete[i]);
+                    try {
+                        //Dateien werden aus Ordnern gelöscht
+                        Files.deleteIfExists(Paths.get(pathsToDelete[i]));
+                    } catch (IOException ex) {
+                        Logger.getLogger(ReplaceCloudDialog_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    break;
+                }
+
+            }
+            partfiles.deletePartsFiles(namesOfFiles[j]);
+            moveFile.moveFile();
+        }
+
+    }
+
+    /**
+     * Löscht den alten Inhalt der Cloud und in der DB
+     *
+     * @throws SQLException
+     */
+    public void deleteOldCloudContent() throws SQLException {
+        String[] pathsOfFiles = new String[partfiles.getNumberOfParts()];
+        for (int j = 0; j < pathsOfFiles.length; j++) {
+            pathsOfFiles = partfiles.getPartsPath();
+
+        }
+        for (int j = 0; j < pathsOfFiles.length; j++) {
+            pathsOfFiles[j] = placeholderPath.replacePlaceholder(pathsOfFiles[j]);
+        }
+        if (pathsOfFiles[0] != null) {
+            for (int w = 0; w < pathsOfFiles.length; w++) {
+                try {
+                    //Dateien werden aus Ordnern gelöscht
+                    Files.deleteIfExists(Paths.get(pathsOfFiles[w]));
+                } catch (IOException ex) {
+                    Logger.getLogger(ReplaceCloudDialog_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        //Alte Informationen werden aus DB gelöscht
+        partfiles.deleteAllPartFiles();
+        originalfile.deleteAllFiles();
+        //TODO tabelle im Main Fenster aktualisieren
+
+    }
+
+    /**
+     * Erstellt ein Objekt, welches die Informationen zu Original-Datei
+     * speichert
+     *
+     * @param path
+     * @return
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws NoSuchAlgorithmException
+     */
+    public OriginalFile createFileObject(String path) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
+        OriginalFile file = new OriginalFile();
+        System.out.println(path);
+        String filePath = path;
+        String fileName = "";
+        String type = "";
+        String size = "";
+
+        for (int i = filePath.length() - 1; i >= 0; i--) {
+            for (int j = filePath.length() - 1; j >= 0; j--) {
+                if (filePath.charAt(j) == '\\') {
+                    if (filePath.charAt(i) == '.') {
+                        fileName = (filePath.substring(j + 1, i));
+                        break;
+                    }
+
+                }
+            }
+        }
+        //DateiEndung
+        for (int i = filePath.length() - 1; i >= 0; i--) {
+            if (filePath.charAt(i) == '.') {
+                type = (filePath.substring(i, filePath.length()));
+
+            }
+        }
+
+        //DateiGröße
+        size = (Long.toString(Files.size(Paths.get(filePath))));
+        double sizeNext = Double.parseDouble(size);
+        sizeNext = Math.ceil(sizeNext / 1000) * 1000;
+        int sizeNextInt = (int) sizeNext / 1000;
+        size = (Integer.toString(sizeNextInt) + " KB");
+
+        //Datum
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+
+        //file.setId(dtf.format(now) + type + size);
+        filePath = placeholderPath.setPlaceholder(filePath);
+        file.setPath(filePath);
+        file.setName(fileName);
+        file.setType(type);
+        file.setSize(size);
+        file.setDate(dtf.format(now));
+        //file.setCheckSum(checksum);
+
+        return file;
+
+    }
+
 }

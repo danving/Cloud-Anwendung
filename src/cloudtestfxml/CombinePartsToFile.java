@@ -33,12 +33,13 @@ public class CombinePartsToFile {
      * @param sizeOfParts Soll-Länge der einzelnen Parts
      * @param name Name der urprünglichen Datei
      * @param type Typ der ursprünglichen Datei
+     * @param open fragt ob Datei nach zusammenfügen geöffnet werden soll
      * @throws FileNotFoundException
      * @throws IOException
      * @throws SQLException 
      */
-    public void combinePartsToFile(long sizeOfParts[], String name, String type) throws FileNotFoundException, IOException, SQLException {
-        final int numberOfParts = partFilesTable.getNumberOfParts(name);
+    public void combinePartsToFile(long sizeOfParts[], String name, String type, boolean open) throws FileNotFoundException, IOException, SQLException {
+        final int numberOfParts = partFilesTable.getNumberOfPartsPerName(name);
         String tempDirPath = tempDir.getTempDir();
         tempDirPath = placeholderPath.replacePlaceholder(tempDirPath);
         File originalFile = new File(tempDirPath + "\\" + name + "_Original" + type);
@@ -54,7 +55,7 @@ public class CombinePartsToFile {
 
         //String Array für die Teil-Pfade
         String[] inPath = new String[numberOfParts];
-        inPath = partFilesTable.getPartsPath(name);
+        inPath = partFilesTable.getPartsPathPerName(name);
         for (int i = 0; i < numberOfParts; i++) {
             inPath[i] = placeholderPath.replacePlaceholder(inPath[i]);
             //System.out.println(inPath[i]);
@@ -97,9 +98,20 @@ public class CombinePartsToFile {
                 out.close();
             }
         }
-
-        //Öffnet die neu erstellte Datei
-        Desktop.getDesktop().open(originalFile);
+        
+        if(open) {
+            openFile(originalFile);
+        }
+        
+    }
+    
+    public void openFile(File file) {
+        try {
+            //Öffnet die neu erstellte Datei
+            Desktop.getDesktop().open(file);
+        } catch (IOException ex) {
+            Logger.getLogger(CombinePartsToFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //Timer der Originaldatei nach 5 sek. wieder löscht
         long timeToSleep = 5L;
@@ -111,8 +123,8 @@ public class CombinePartsToFile {
             System.out.println("Interrupted");
         }
 
-        if (isFileClosed(originalFile)) {
-            originalFile.delete();
+        if (isFileClosed(file)) {
+            file.delete();
         }
         //System.out.println("Gesamtgröße: " + combined);
     }

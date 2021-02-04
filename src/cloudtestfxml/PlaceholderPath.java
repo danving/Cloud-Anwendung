@@ -24,7 +24,7 @@ public class PlaceholderPath {
                     for (int j = i + 6; j < path.length(); j++) {
                         if (path.charAt(j) == '\\') {
                             cloudPlaceholder = homeDir + "\\" + path.substring(j+1);
-                            System.out.println(cloudPlaceholder);
+                            //System.out.println(cloudPlaceholder);
                             path = cloudPlaceholder;
                             break;
                         }
@@ -53,7 +53,7 @@ public class PlaceholderPath {
                 for (int j = i + 6; j < path.length(); j++) {
                     if (path.charAt(j) == '\\') {
                         cloudPlaceholder = homePlaceholder + userPlaceholder + path.substring(j);
-                        System.out.println(cloudPlaceholder);
+                        //System.out.println(cloudPlaceholder);
                         break;
                     }
                 }

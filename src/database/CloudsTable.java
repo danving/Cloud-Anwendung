@@ -72,7 +72,6 @@ public class CloudsTable {
         ResultSet resultSet = null;
 
         try {
-            //TODO wenn nur eine Cloud angegeben wird, wird diese nicht gespeichert
             connection = Database.getDBConnection();
             connection.setAutoCommit(false);
             String query = "INSERT INTO clouds(cloud, id, cloudsize, numberOfClouds) VALUES(?,?,?,?)";
@@ -145,7 +144,7 @@ public class CloudsTable {
                 connection.close();
             }
         }
-        System.out.println(size);
+        //System.out.println(size);
         return size;
     }
 
@@ -224,9 +223,11 @@ public class CloudsTable {
                 connection.close();
             }
         }
+        /*
         for (int i = 0; i < cloudsList.length; i++) {
-            //System.out.println(cloudsList[i]);
+            System.out.println(cloudsList[i]);
         }
+        */
         return cloudsList[index];
     }
 
@@ -281,6 +282,44 @@ public class CloudsTable {
             String query = "DELETE FROM clouds WHERE id = ?";
             statement = connection.prepareStatement(query);
             statement.setInt(1, numberOfCloud);
+            //System.out.println(statement);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+    }
+    
+    /**
+     * Ersetzt eine alte Cloud durch eine neue Cloud
+     * @param newCloud
+     * @param cloudSize
+     * @param id
+     * @throws SQLException 
+     */
+    public void updateCloud(String newCloud, int cloudSize, int id) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+
+            String query = "UPDATE clouds SET cloud = ?, cloudsize = ? WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            int counter = 1;
+            statement.setString(counter++, newCloud);
+            statement.setInt(counter++, cloudSize);
+            statement.setInt(counter++, id);
             //System.out.println(statement);
             statement.executeUpdate();
             if (!connection.getAutoCommit()) {

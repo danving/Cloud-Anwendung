@@ -2,10 +2,12 @@ package cloudtestfxml;
 
 import database.OriginalFileTable;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Klasse um die Cloud-Anwendung zu starten
@@ -31,8 +33,6 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        String homeDir = System.getProperty("user.home");
-        System.out.println("jdbc:sqlite:" + homeDir + "\\OneDrive - informatik.hs-fulda.de\\Test\\cloudDatenbank.s3db");
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/resources/Main_fxml.fxml"));
         Parent content = loader.load();
 
@@ -40,6 +40,12 @@ public class Main extends Application {
         stage.setTitle("Cloud Anwendung");
         stage.setScene(scene);
         stage.show();
+        stage.setOnHidden(new EventHandler<WindowEvent>() {
+		@Override
+		public void handle(WindowEvent event) {
+			stage.show();
+		}
+	});
 
     }
 }

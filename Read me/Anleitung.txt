@@ -8,7 +8,7 @@ Cloud-Ordner auf Rechner installieren
 2. OneDrive und Dropbox sind optional, können aber verwendet werden
 3. sonst kann jede beliebe andere Cloud verwendet werden
 4. OneDrive bitte unter "C:\Users\"username"\OneDrive-Cloud\OneDrive" speichern und "username" ersetzten
-5. Anmeldedaten für die 3 Clouds: Name: cloudtestuser.00@gmail.com; Passwort: HalloCloudUser0011
+5. Anmeldedaten bitte anfragen
 
 
 Programm Installieren

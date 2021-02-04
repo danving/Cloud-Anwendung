@@ -10,9 +10,12 @@ import java.util.logging.Logger;
 
 /**
  * Verwaltet die Teil-Dateien-Tabelle der Datenbank
+ *
  * @author danvi
  */
 public class PartFilesTable {
+
+    OriginalFileTable originalfile = new OriginalFileTable();
 
     private static final Logger logger = Logger.getLogger(PartFilesTable.class.getName());
 
@@ -106,13 +109,51 @@ public class PartFilesTable {
     }
 
     /**
+     * Gibt ein String-Array mit allen Namen der Partfiles, ohne
+     * Dupilkationen
+     * @return
+     * @throws SQLException 
+     */
+    public String[] getNamesOfParts() throws SQLException {
+        String[] partsName = new String[originalfile.getNumberOfFiles()];
+        //System.out.println(originalfile.getNumberOfFiles());
+        int count = 0;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "SELECT DISTINCT name FROM partfiles";
+            statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                partsName[count] = resultSet.getString(1);
+                count++;
+
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+        return partsName;
+    }
+
+    /**
      * Gibt die Anzahl der Teil-Dateien zurück
      *
      * @param id Name der Original-Datei
      * @return
      * @throws SQLException
      */
-    public int getNumberOfParts(String id) throws SQLException {
+    public int getNumberOfParts() throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         int numberOfParts = 0;
@@ -120,9 +161,8 @@ public class PartFilesTable {
         try {
             connection = Database.getDBConnection();
             connection.setAutoCommit(false);
-            String query = "SELECT COUNT(*) FROM partfiles WHERE name = ?";
+            String query = "SELECT COUNT(*) FROM partfiles";
             statement = connection.prepareStatement(query);
-            statement.setString(counter++, id);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -144,11 +184,47 @@ public class PartFilesTable {
         return numberOfParts;
     }
     
+    
+    public int getNumberOfPartsPerName(String name) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        int numberOfParts = 0;
+        int counter = 1;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "SELECT COUNT(*) FROM partfiles where name = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(counter++, name);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                numberOfParts = resultSet.getInt(1);
+
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+        //System.out.println(numberOfParts);
+        return numberOfParts;
+    }
+    
+
     /**
-     * Gibt die Chunk-Größe zurück, die zum Teilen der gewünschten Datei verwendet wurde
+     * Gibt die Chunk-Größe zurück, die zum Teilen der gewünschten Datei
+     * verwendet wurde
+     *
      * @param id Name der Datei, deren Chunk-Größe zurück gegeben werden soll
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public int getChunkSize(String id) throws SQLException {
         Connection connection = null;
@@ -185,11 +261,51 @@ public class PartFilesTable {
     /**
      * Gibt die Pfade der Teil-Dateien zurück
      *
-     * @param id Name der Original-Datei
+     * @param name Name der Original-Datei
      * @return
      * @throws SQLException
      */
-    public String[] getPartsPath(String id) throws SQLException {
+    public String[] getPartsPath() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        String paths[] = new String[getNumberOfParts()];
+        int counter = 1;
+        int i = 0;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "SELECT path FROM partfiles";
+            statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                paths[i] = resultSet.getString("path");
+                i += 1;
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+        
+         
+        return paths;
+    }
+    
+    /**
+     * Gibt in einem String[] die Pfade der Teil-Dateien von einem bestimmt Part
+     * zurück
+     * @param part
+     * @return
+     * @throws SQLException 
+     */
+    public String[] getPartsPathPerName(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         String paths[] = new String[5];
@@ -200,7 +316,7 @@ public class PartFilesTable {
             connection.setAutoCommit(false);
             String query = "SELECT path FROM partfiles WHERE name = ?";
             statement = connection.prepareStatement(query);
-            statement.setString(counter++, id);
+            statement.setString(counter++, name);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -222,7 +338,7 @@ public class PartFilesTable {
         for (int j = 0; j < paths.length; j++) {
             System.out.println("Paths: " + paths[j]);
         }
-        */
+         */
         return paths;
     }
 
@@ -266,7 +382,7 @@ public class PartFilesTable {
         for (int j = 0; j < partsSize.length; j++) {
             System.out.println("PathSize: " + partsSize[j]);
         }
-        */
+         */
         return partsSize;
     }
 
@@ -304,11 +420,44 @@ public class PartFilesTable {
     }
 
     /**
-     * Gibt die Gesamt-Größe der Dateien zurück, die bereits in die ausgewählte Cloud
-     * hinzugefügt wurde.
+     * Löscht alle Einträge aus der Datenbank
+     *
+     * @throws SQLException
+     */
+    public void deleteAllPartFiles() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "DELETE FROM partfiles";
+            statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+
+    }
+
+    /**
+     * Gibt die Gesamt-Größe der Dateien zurück, die bereits in die ausgewählte
+     * Cloud hinzugefügt wurde.
+     *
      * @param cloud id der ausgwählten Cloud
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public long getCloudCapacity(int cloud) throws SQLException {
         Connection connection = null;
@@ -337,8 +486,7 @@ public class PartFilesTable {
                 connection.close();
             }
         }
-       
+
         return cloudCapacity;
     }
 }
-
