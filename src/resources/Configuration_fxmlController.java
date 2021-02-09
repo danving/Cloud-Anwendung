@@ -21,8 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -421,15 +419,7 @@ public class Configuration_fxmlController implements Initializable {
                     cloudsTable.updateCloudNumber(spinnerValue);
                     originalfileTable.resetAutoIncrement();
                     partfilesTable.resetAutoIncrement();
-                    /*mainController.deleteTableView();
                     
-                    synchronized (this) {
-                        Main_fxmlController.waitDeleteTableView = true;
-                        deleteTableView = true;
-                        notify();
-                        Main_fxmlController.waitDeleteTableView = false;
-                    }
-                     */
                     //Content wird verschoben
                 } else if (dialog.moveContent) {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
@@ -493,15 +483,7 @@ public class Configuration_fxmlController implements Initializable {
                     mainTableView.getItems().clear();
                     originalfileTable.resetAutoIncrement();
                     partfilesTable.resetAutoIncrement();
-                    /*mainController.deleteTableView();
-
-                    synchronized (this) {
-                        Main_fxmlController.waitDeleteTableView = true;
-                        deleteTableView = true;
-                        notify();
-                        Main_fxmlController.waitDeleteTableView = false;
-                    }
-                     */
+                    
                     //Verschieben des alten Contents
                 } else if (dialog.moveContent) {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt

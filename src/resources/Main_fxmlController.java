@@ -24,9 +24,6 @@ import java.lang.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.Parent;
@@ -132,7 +129,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                  
             }
         }
-
+        //TreeView
         /*
         String homeDir = System.getProperty("user.home");
         String tempTree = homeDir + "//Desktop";

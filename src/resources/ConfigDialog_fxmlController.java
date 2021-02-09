@@ -22,6 +22,10 @@ public class ConfigDialog_fxmlController implements Initializable {
     @FXML
     private Button closeDialogButton;
 
+    /**
+     * Button schließt Dialog
+     * @param e 
+     */
     @FXML
     public void closeDialog(ActionEvent e) {
         Stage stage = (Stage) closeDialogButton.getScene().getWindow();

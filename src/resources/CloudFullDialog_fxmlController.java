@@ -26,6 +26,10 @@ public class CloudFullDialog_fxmlController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }
 
+    /**
+     * Button schließt Dialog
+     * @param e 
+     */
     @FXML
     public void closeCloudFullDialog(ActionEvent e) {
         Stage stage = (Stage) closeButton.getScene().getWindow();
