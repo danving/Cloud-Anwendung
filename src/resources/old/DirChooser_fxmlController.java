@@ -39,7 +39,7 @@ public class DirChooser_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert den ausgewählten
      * Ordnerpfad in das Textfeld.
      *
-     * @param e
+     * @param e Action Event
      */
     @FXML
     public void chooseCloud(ActionEvent e) {
@@ -62,7 +62,7 @@ public class DirChooser_fxmlController implements Initializable {
     /**
      * Schließt das Fenster
      *
-     * @param e
+     * @param e Action Event
      */
     @FXML
     public void confirmCloud(ActionEvent e) {
@@ -74,7 +74,7 @@ public class DirChooser_fxmlController implements Initializable {
     /**
      * Schließt das Fenster
      *
-     * @param e
+     * @param e Action Event
      */
     @FXML
     public void closeCloudChooser(ActionEvent e) {

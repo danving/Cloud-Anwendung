@@ -15,6 +15,9 @@ import java.util.logging.Logger;
  */
 public class PartFilesTable {
 
+    /**
+     * neue Klasseninstanz für die Klasse OriginalFileTable()
+     */
     OriginalFileTable originalfile = new OriginalFileTable();
 
     private static final Logger logger = Logger.getLogger(PartFilesTable.class.getName());
@@ -51,8 +54,8 @@ public class PartFilesTable {
     /**
      * Überprüft, ob die Teil-Datei bereits in die Datenbank eingefügt wurde
      *
-     * @param partPath
-     * @return
+     * @param partsName Name der zu prüfenden Teil-Datei
+     * @return boolean, ob Teil-Datei bereits existiert
      * @throws SQLException
      */
     public boolean partFileExists(String partsName) throws SQLException {
@@ -90,8 +93,8 @@ public class PartFilesTable {
     /**
      * Speiechern die Teil-Dateien in die Datenbank
      *
-     * @param partFiles
-     * @return
+     * @param partFiles Obejekt PartFiles
+     * @return 0
      * @throws SQLException
      */
     public int savePartFile(PartFiles partFiles) throws SQLException {
@@ -140,7 +143,7 @@ public class PartFilesTable {
     /**
      * Gibt ein String-Array mit allen Namen der Partfiles, ohne Dupilkationen
      *
-     * @return
+     * @return String-Array mit allen Namen der Original-Datei der Teil-Dateien (einmal)
      * @throws SQLException
      */
     public String[] getNamesOfParts() throws SQLException {
@@ -178,7 +181,7 @@ public class PartFilesTable {
     /**
      * Gibt die Anzahl der Teil-Dateien zurück
      *
-     * @return
+     * @return Anzahl aller Teil-Dateien
      * @throws SQLException
      */
     public int getNumberOfParts() throws SQLException {
@@ -216,7 +219,7 @@ public class PartFilesTable {
      * Gibt die Anzahl der Teil-Dateien mit einem bestimmten Namen zurück
      *
      * @param name Name der gewünschten Teil-Dateien
-     * @return
+     * @return Anzahl von bestimmten Teil-Dateien
      * @throws SQLException
      */
     public int getNumberOfPartsPerName(String name) throws SQLException {
@@ -256,7 +259,7 @@ public class PartFilesTable {
      * verwendet wurde
      *
      * @param name Name der Datei, deren Chunk-Größe zurück gegeben werden soll
-     * @return
+     * @return Chunk-Größe von bestimmter Teil-Datei
      * @throws SQLException
      */
     public int getChunkSize(String name) throws SQLException {
@@ -294,7 +297,7 @@ public class PartFilesTable {
     /**
      * Gibt die Pfade der Teil-Dateien zurück
      *
-     * @return
+     * @return String-Array mit allen Teil-Datei-Pfaden
      * @throws SQLException
      */
     public String[] getPartsPath() throws SQLException {
@@ -333,8 +336,8 @@ public class PartFilesTable {
      * Gibt in einem String[] die Pfade der Teil-Dateien von einem bestimmt
      * Namen zurück
      *
-     * @param name
-     * @return
+     * @param name Name der zurückgenenen Teil-Dateien
+     * @return String-Array mit Pfaden von bestimmten Teil-Dateien
      * @throws SQLException
      */
     public String[] getPartsPathPerName(String name) throws SQLException {
@@ -378,7 +381,7 @@ public class PartFilesTable {
      * Gibt die Größe der Teil-Dateien mit einem bestimmten Namen zurück
      *
      * @param name Name der Original-Datei
-     * @return
+     * @return Long-Array mit der Datei-Größe von bestimmten Teil-Dateien
      * @throws SQLException
      */
     public long[] getPartsSize(String name) throws SQLException {
@@ -488,7 +491,7 @@ public class PartFilesTable {
      * Cloud hinzugefügt wurde.
      *
      * @param cloud id der ausgwählten Cloud
-     * @return
+     * @return Bisher  belegter Speicher
      * @throws SQLException
      */
     public long getCloudCapacity(int cloud) throws SQLException {

@@ -11,8 +11,8 @@ public class PlaceholderPath {
     /**
      * Ersetzt den Platzhalter im Pfad durch den Usernamen aus dem System
      *
-     * @param path
-     * @return
+     * @param path Pfad mit Platzhalter
+     * @return Pfad ohne Platzhalter
      */
     public String replacePlaceholder(String path) {
         if (path != null) {
@@ -40,8 +40,8 @@ public class PlaceholderPath {
     /**
      * Ersetzt den Usernamen in dem Pfad durch einen Platzhalter
      *
-     * @param path
-     * @return
+     * @param path Pfad ohne Platzhalter
+     * @return Pfad mit Platzhalter
      */
     public String setPlaceholder(String path) {
 

@@ -19,9 +19,22 @@ import java.util.logging.*;
 public class CombinePartsToFile {
 
     //KlassenInstanzen
+    //Klasseninstanzen
+    /**
+     * neue Klasseninstanz für die Klasse CloudTable()
+     */
     CloudsTable cloudsTable = new CloudsTable();
+    /**
+     * neue Klasseninstanz für die Klasse PartFilesTable()
+     */
     PartFilesTable partfilesTable = new PartFilesTable();
+    /**
+     * neue Klasseninstanz für die Klasse PlaceholderPath()
+     */
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    /**
+     * neue Klasseninstanz für die Klasse TempDir();
+     */
     TempDir tempDir = new TempDir();
 
     /**
@@ -107,7 +120,7 @@ public class CombinePartsToFile {
     /**
      * Falls die Teil-Dateien zusammengefügt werden, um die ursprüngliche Datei
      * anzuzeigen,wird sie mit dieser Methode geöffnet
-     * @param file 
+     * @param file Datei, die geöffnet werden soll
      */
     public void openFile(File file) {
         try {
@@ -137,7 +150,7 @@ public class CombinePartsToFile {
      * Überprüft, ob die Datei geschlossen wurde
      *
      * @param file Datei mit zusammengefühgtem Inhalt
-     * @return
+     * @return boolean, ob Datei geschlossen wurde
      */
     private static boolean isFileClosed(File file) {
         boolean closed;

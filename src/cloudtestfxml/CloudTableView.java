@@ -14,10 +14,6 @@ public class CloudTableView {
     private String date = null;
     private String type = null;
     private String size = null;
-
-    public CloudTableView() {
-    }
-
     /**
      * Konstruktor für die Klasse CloudTable
      *

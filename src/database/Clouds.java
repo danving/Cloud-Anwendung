@@ -1,7 +1,7 @@
 package database;
 
 /**
- * 
+ * Getter und Setter für die Informationen über die zu speichernden Clouds
  *
  * @author danvi
  */
@@ -16,7 +16,7 @@ public class Clouds {
     /**
      * Gibt den Pfad der Cloud zurück
      *
-     * @return
+     * @return  Cloud-Pfad
      */
     public String getCloud() {
         return cloud;
@@ -25,7 +25,7 @@ public class Clouds {
     /**
      * Setzte den Pfad der Cloud
      *
-     * @param cloud
+     * @param cloud Pfad der Cloud
      */
     public void setCloud(String cloud) {
         this.cloud = cloud;
@@ -33,7 +33,7 @@ public class Clouds {
     
     /**
      * Gibt die Id der Cloud zurück
-     * @return 
+     * @return ID der Cloud
      */
     public int getId() {
         return id;
@@ -41,7 +41,7 @@ public class Clouds {
     
     /**
      * Setzt die Id der Cloud
-     * @param id 
+     * @param id  Id der Cloud
      */
     public void setId(int id) {
         this.id = id;
@@ -49,7 +49,7 @@ public class Clouds {
     
     /**
      * Gibt die Speicherkapazität der Cloud zurück
-     * @return size
+     * @return Speicherkapazität der Cloud
      */
     public int getSize() {
         return size;
@@ -57,7 +57,7 @@ public class Clouds {
 
     /**
      * Setzt die Speicherkapazität der Cloud
-     * @param size 
+     * @param size Größe der Cloud
      */
     public void setSize(int size) {
         this.size = size;
@@ -66,7 +66,7 @@ public class Clouds {
     /**
      * Gibt die Anzahl der Clouds zurück
      *
-     * @return
+     * @return Anzahl der Clouds
      */
     public int getNumber() {
         return number;
@@ -75,7 +75,7 @@ public class Clouds {
     /**
      * Setzt die Anzahl der Clouds
      *
-     * @param number
+     * @param number Anzahl der Clouds
      */
     public void setNumber(int number) {
         this.number = number;

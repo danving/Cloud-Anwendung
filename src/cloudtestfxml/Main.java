@@ -25,7 +25,7 @@ public class Main extends Application {
     /**
      * Ladet die FXML-Datei für das Hauptfenster
      *
-     * @param stage
+     * @param stage Stage die geöffnet werden soll
      * @throws Exception
      */
     @Override

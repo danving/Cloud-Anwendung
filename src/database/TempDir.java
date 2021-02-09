@@ -20,7 +20,7 @@ public class TempDir {
     /**
      * Überprüft, ob bereits ein Temp-Ordner angegeben wurde
      *
-     * @return
+     * @return boolean, ob bereits ein Temp-Ordner gespeichert wurde
      * @throws SQLException
      */
     public boolean tempDirExists() throws SQLException {
@@ -93,8 +93,8 @@ public class TempDir {
     /**
      * Speichert den ausgewählten Temp-Ordner in der Datenbank
      *
-     * @param tempDir
-     * @return
+     * @param tempDir Pfad des Temp-Ordners
+     * @return 0
      * @throws SQLException
      */
     public int saveTempDir(String tempDir) throws SQLException {
@@ -141,7 +141,7 @@ public class TempDir {
 
     /**
      * Gibt den gespeicherten Pfad des Temp-Ordners zurück
-     * @return
+     * @return Pfad des Temp-Ordners
      * @throws SQLException 
      */
     public String getTempDir() throws SQLException {

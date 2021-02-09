@@ -28,7 +28,7 @@ public class CloudFullDialog_fxmlController implements Initializable {
 
     /**
      * Button schließt Dialog
-     * @param e 
+     * @param e Action Event
      */
     @FXML
     public void closeCloudFullDialog(ActionEvent e) {

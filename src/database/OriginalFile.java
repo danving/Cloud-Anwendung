@@ -3,7 +3,7 @@ package database;
 import java.io.Serializable;
 
 /**
- *
+ * Getter und Setter für die Informationen der Original-Datei
  * @author danvi
  */
 public class OriginalFile implements Serializable {
@@ -19,7 +19,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt die ID der Originaldatei zurück
      *
-     * @return
+     * @return id der Original-Datei
      */
     public String getId() {
         return id;
@@ -37,7 +37,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt den Pfad der Originaldatei zurück
      *
-     * @return
+     * @return alter Pfad der Original-Datei
      */
     public String getPath() {
         return path;
@@ -46,7 +46,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzte den Pfad der Originaldatei
      *
-     * @param name
+     * @param path Pfad der Original-Datei
      */
     public void setPath(String path) {
         this.path = path;
@@ -55,7 +55,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt den Namen der Originaldatei zurück
      *
-     * @return
+     * @return Name der Original-Datei
      */
     public String getName() {
         return name;
@@ -64,7 +64,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzte den Namen der Originaldatei
      *
-     * @param name
+     * @param name Name der Orignal-Datei
      */
     public void setName(String name) {
         this.name = name;
@@ -73,7 +73,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt den Typ der Originaldatei zurück
      *
-     * @return
+     * @return Datentyp der Original-Datei
      */
     public String getType() {
         return type;
@@ -82,7 +82,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzt den Typ der Originaldatei
      *
-     * @param type
+     * @param type Datentyp der Original-Datei
      */
     public void setType(String type) {
         this.type = type;
@@ -91,7 +91,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt die Größe der Originaldatei zurück
      *
-     * @return
+     * @return Größe der Original-Datei
      */
     public String getSize() {
         return size;
@@ -100,7 +100,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzt die Größe der Originaldatei
      *
-     * @param size
+     * @param size Größe der Original-Datei
      */
     public void setSize(String size) {
         this.size = size;
@@ -109,7 +109,7 @@ public class OriginalFile implements Serializable {
     /**
      * Gibt das Datum zurück, an dem die Originaldatei hinzugefügt wurde
      *
-     * @return
+     * @return Datum an dem die Orignal-Datei eingefügt wurde
      */
     public String getDate() {
         return date;
@@ -118,7 +118,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzt das Datum, an dem die Originaldatei hinzugefügt wurde
      *
-     * @param date
+     * @param date Darum der Original-Datei
      */
     public void setDate(String date) {
         this.date = date;
@@ -126,7 +126,7 @@ public class OriginalFile implements Serializable {
 
     /**
      * Gibt die Checksumme der Originaldatei zurück
-     * @return 
+     * @return Checksumme der Original-Datei
      */
     public String getCheckSum() {
         return checkSum;
@@ -135,7 +135,7 @@ public class OriginalFile implements Serializable {
     /**
      * Setzte die Checksumme der Originaldatei
      *
-     * @param checkSum
+     * @param checkSum Checksumme der Original-Datei
      */
     public void setCheckSum(String checkSum) {
         this.checkSum = checkSum;

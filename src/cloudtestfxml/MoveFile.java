@@ -21,12 +21,30 @@ public class MoveFile {
 
     private static final Logger logger = Logger.getLogger(MoveFile.class.getName());
     //Klasseninstanzen
+    /**
+     * neue Klasseninstanz für die Klasse CloudTable()
+     */
     CloudsTable cloudsTable = new CloudsTable();
+    /**
+     * neue Klasseninstanz für die Klasse OriginalFileTable()
+     */
     OriginalFileTable originalfileTable = new OriginalFileTable();
+    /**
+     * neue Klasseninstanz für die Klasse PartFilesTable()
+     */
     PartFilesTable partfilesTable = new PartFilesTable();
+    /**
+     * neue Klasseninstanz für die Klasse PlaceholderPath()
+     */
     PlaceholderPath placeholderPath = new PlaceholderPath();
     //Globale Variablen
+    /**
+     * Long-Array für die Größe der einzelnen Teil-Dateien
+     */
     long sizePerPart[];
+    /**
+     * Größe der Chunks
+     */
     int chunkSize;
 
     /**
@@ -54,7 +72,7 @@ public class MoveFile {
      *
      * @param filePath Dateipfad der Datei, die verschoben werden soll
      * @param numberOfClouds Anzahl der Clouds
-     * @return
+     * @return berechnete Größe der Teil-Dateien
      * @throws FileNotFoundException
      * @throws IOException
      * @throws SQLException
@@ -261,15 +279,15 @@ public class MoveFile {
     }
 
     /**
-     * Erstellt ein Object für die Informationen der Tei-Dateien
+     * Erstellt ein Object für die Informationen der Teil-Dateien
      *
-     * @param id
-     * @param name
-     * @param path
-     * @param part
-     * @param size
-     * @param chunkSize
-     * @return
+     * @param id ID der Teil-Datel
+     * @param name Name der Teil-Datei
+     * @param path Pfad der Teil-Datei
+     * @param part Nummer der Teil-Datei
+     * @param size Größe der Teil-Datei
+     * @param chunkSize Chunk-Größe der Teil-Datei
+     * @return Objekt mir den Informationen zu der Teil-Datei
      */
     public PartFiles createPartFileObject(String id, String name, String path, int part, long size, int chunkSize) {
         path = placeholderPath.setPlaceholder(path);

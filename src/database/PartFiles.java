@@ -1,7 +1,7 @@
 package database;
 
 /**
- *
+ * Getter und Setter für die Informationen über die Teil-Dateien
  * @author danvi
  */
 public class PartFiles {
@@ -16,7 +16,7 @@ public class PartFiles {
     /**
      * Gibt die ID der Teil-Datei zurück
      *
-     * @return
+     * @return id der Teil-Datei
      */
     public String getId() {
         return id;
@@ -34,7 +34,7 @@ public class PartFiles {
     /**
      * Gibt den Namen der Teil-Datei zurück
      *
-     * @return
+     * @return name der Teil-Datei
      */
     public String getName() {
         return name;
@@ -43,7 +43,7 @@ public class PartFiles {
     /**
      * Setzte den Namen der Teil-Datei
      *
-     * @param name
+     * @param name Name der Teil-Datei
      */
     public void setName(String name) {
         this.name = name;
@@ -52,7 +52,7 @@ public class PartFiles {
     /**
      * Gibt den Pfad der Teil-Datei zurück
      *
-     * @return
+     * @return Pfad der Teil-Datei
      */
     public String getPath() {
         return path;
@@ -61,7 +61,7 @@ public class PartFiles {
     /**
      * Setzt Pfad der Teil-Datei
      *
-     * @param path
+     * @param path Pfad der Teil-Datei
      */
     public void setPath(String path) {
         this.path = path;
@@ -70,7 +70,7 @@ public class PartFiles {
     /**
      * Gibt die Nummer der Teil-Datei zurück
      *
-     * @return
+     * @return Nummer der Teil-Datei
      */
     public int getPart() {
         return part;
@@ -79,7 +79,7 @@ public class PartFiles {
     /**
      * Setzt die Nummer der Teil-Datei
      *
-     * @param part
+     * @param part Nummer der Teil-Datei
      */
     public void setPart(int part) {
         this.part = part;
@@ -87,7 +87,7 @@ public class PartFiles {
 
     /**
      * Gibt die Größe der Teil-Datei zurück
-     * @return 
+     * @return Größe der Teil-Datei
      */
     public long getPartsSize() {
         return partsSize;
@@ -95,7 +95,7 @@ public class PartFiles {
 
     /**
      * Setzt die Größe der Teil-Datei 
-     * @param size 
+     * @param size Größe der Teil-Datei
      */
     public void setPartsSize(long size) {
         this.partsSize = size;
@@ -103,7 +103,7 @@ public class PartFiles {
 
     /**
      * Gibt die Chunk-Größe zurück, die zum Teilen verwendet wurde
-     * @return 
+     * @return Chunk-Größe der Teil-Datei
      */
     public int getChunkSize() {
         return chunkSize;
@@ -111,7 +111,7 @@ public class PartFiles {
 
     /**
      * Setzt die Chunk-Größe, die zum Teilen verwendet wurde
-     * @param chunkSize 
+     * @param chunkSize Chunk-Größe der Teil-Datei
      */
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;

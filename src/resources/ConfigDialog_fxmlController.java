@@ -14,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 /**
- *
+ * Controller für Dialog, der dem Anwender darauf hinweist, dass noch nicht alle Pflichtpfelder ausgefüllt sind
  * @author danvi
  */
 public class ConfigDialog_fxmlController implements Initializable {
@@ -24,7 +24,7 @@ public class ConfigDialog_fxmlController implements Initializable {
 
     /**
      * Button schließt Dialog
-     * @param e 
+     * @param e Action Event
      */
     @FXML
     public void closeDialog(ActionEvent e) {

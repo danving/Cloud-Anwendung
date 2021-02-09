@@ -43,30 +43,74 @@ import javafx.stage.Stage;
  */
 public class Configuration_fxmlController implements Initializable {
 
+    /**
+     * Cloud, die ausgewählt wurde
+     */
     File selectedDir;
+    /**
+     * String-Array für die Pfade zu den Clouds, die ausgewählt wurde
+     */
     String selectedDirPath[] = new String[5];
+    /**
+     * Int-Array für die Speicherkapazität der ausgwählten Clouds
+     */
     int cloudSize[] = new int[5];
+    /**
+     * Textfeld-Array für die ausgewählten Cloud-Pfade
+     */
     TextField textfield[] = new TextField[10];
+    /**
+     *  Anzahl der auszuwählenden Clouds
+     */
     int spinnerValue;
-    //int i = 1;
+    /**
+     * String um den ausgwählten Pfad zu speichern und dann im Textfeld wiederzugeben
+     */
     String tempDirPath;
+    /**
+     * Homeverzeichnis des aktuellen Rechners
+     */
     String homeDir = System.getProperty("user.home");
 
+    /**
+     * Boolean für Synchronisation für ReplaceCloudDialog_fxmlController()
+     */
     public static boolean waitingReplaceCloud = false;
-    public boolean deleteTableView = false;
+    /**
+     * TableView, damit TableView vom Hauptfenster übergeben werden kann
+     */
     public TableView mainTableView;
 
     private static final Logger logger = Logger.getLogger(Configuration_fxmlController.class.getName());
     //Klasseninstanzen
+    /**
+     * neue Klasseninstanz für die Klasse CloudTable()
+     */
     CloudsTable cloudsTable = new CloudsTable();
+    /**
+     * neue Klasseninstanz für die Klasse OriginalFileTable()
+     */
     OriginalFileTable originalfileTable = new OriginalFileTable();
+    /**
+     * neue Klasseninstanz für die Klasse PartFilesTable()
+     */
     PartFilesTable partfilesTable = new PartFilesTable();
-    CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
-    MoveFile moveFile = new MoveFile();
+    /**
+     * neue Klasseninstanz für die Klasse PlaceholderPath()
+     */
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    /**
+     * neue Klasseninstanz für die Klasse CombinePartsToFile()
+     */
+    CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
+    /**
+     * neue Klasseninstanz für die Klasse MoveFile()
+     */
+    MoveFile moveFile = new MoveFile();
+    /**
+     * neue Klasseninstanz für die Klasse TempDir()
+     */
     TempDir tempDir = new TempDir();
-    Main_fxmlController mainController = new Main_fxmlController();
-
     //Scenebuiler-Elemente
     @FXML
     private Button confirmConfigButton;
@@ -133,7 +177,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode speichert die gewünschte Anzahl an Clouds und
      * aktiviert/deaktiviert die passende Anzahl der Textfelder
      *
-     * @param e
+     * @param e Action Event
      */
     @FXML
     public void confirmNumberOfCloud(ActionEvent e) {
@@ -146,7 +190,7 @@ public class Configuration_fxmlController implements Initializable {
      * öffnet den DirectoryChooser und speichert ausgeählten Pfad als
      * Temp-Ordner
      *
-     * @param e
+     * @param e Action Event
      * @throws SQLException
      */
     @FXML
@@ -176,7 +220,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 0
      *
-     * @param e
+     * @param e Action Event
      * @throws SQLException
      */
     @FXML
@@ -205,7 +249,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 1
      *
-     * @param e
+     * @param e Action Event
      */
     public void openDirChooser1(ActionEvent e) {
         Stage stage = new Stage();
@@ -230,7 +274,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 2
      *
-     * @param e
+     * @param e Action Event
      */
     public void openDirChooser2(ActionEvent e) {
         Stage stage = new Stage();
@@ -255,7 +299,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 3
      *
-     * @param e
+     * @param e Action event
      */
     public void openDirChooser3(ActionEvent e) {
         Stage stage = new Stage();
@@ -280,7 +324,7 @@ public class Configuration_fxmlController implements Initializable {
      * Methode öffnet den DirectoryChooser und speichert ausgeählten Pfad in das
      * Textfeld 4
      *
-     * @param e
+     * @param e Action Event
      */
     public void openDirChooser4(ActionEvent e) {
         Stage stage = new Stage();
@@ -304,9 +348,11 @@ public class Configuration_fxmlController implements Initializable {
     /**
      * Methode speichert die festgelegten Einstellungen
      *
-     * @param e
+     * @param e Action Event
      * @throws SQLException
      * @throws IOException
+     * @thows FileNotFoundException
+     * @throws NoSuchAlgorithmException
      */
     @FXML
     public void confirmConfig(ActionEvent e) throws SQLException, IOException, FileNotFoundException, NoSuchAlgorithmException {
@@ -538,7 +584,7 @@ public class Configuration_fxmlController implements Initializable {
     /**
      * Methode schließt das Fenster, ohne Einstellungsänderungen
      *
-     * @param e
+     * @param e Action Event
      */
     @FXML
     public void closeConfig(ActionEvent e
@@ -555,7 +601,7 @@ public class Configuration_fxmlController implements Initializable {
      * @param id id-Nummer
      * @param size angegebene Größe der Cloud
      * @param number Gesamt-Anzahl der gespeicherten Clouds
-     * @return
+     * @return Objekt, welches Informationen über die ausgwählte Cloud hat
      */
     public Clouds createCloudsObject(String cloud, int id, int size, int number) {
         String cloudPlaceholder = placeholderPath.setPlaceholder(cloud);
@@ -763,8 +809,8 @@ public class Configuration_fxmlController implements Initializable {
      * Erstellt ein Objekt, welches die Informationen zu Original-Datei
      * speichert
      *
-     * @param path
-     * @return
+     * @param path Pfad der eingefügten Datei
+     * @return Objekt, welches die Informationen über die neue, zusammengefügte Datei hat
      * @throws IOException
      * @throws FileNotFoundException
      * @throws NoSuchAlgorithmException

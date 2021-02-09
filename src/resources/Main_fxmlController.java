@@ -1,6 +1,5 @@
 package resources;
 
-import cloudtestfxml.CheckSumSHA;
 import cloudtestfxml.CloudTableView;
 import cloudtestfxml.CombinePartsToFile;
 import cloudtestfxml.FolderHierarchy;
@@ -53,19 +52,50 @@ public class Main_fxmlController extends Thread implements Initializable {
 
     private static final Logger logger = Logger.getLogger(Main_fxmlController.class.getName());
     //Klasseninstanzen
-    OriginalFileTable originalfileTable = new OriginalFileTable();
-    CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
-    PartFilesTable partfilesTable = new PartFilesTable();
+    /**
+     * neue Klasseninstanz für die Klasse CloudTable()
+     */
     CloudsTable cloudsTable = new CloudsTable();
-    CheckSumSHA checkSum = new CheckSumSHA();
-    MoveFile moveFile = new MoveFile();
-    FolderHierarchy folderHierarchy = new FolderHierarchy();
+    /**
+     * neue Klasseninstanz für die Klasse OriginalFileTable()
+     */
+    OriginalFileTable originalfileTable = new OriginalFileTable();
+    /**
+     * neue Klasseninstanz für die Klasse PartFilesTable()
+     */
+    PartFilesTable partfilesTable = new PartFilesTable();
+    /**
+     * neue Klasseninstanz für die Klasse PlaceholderPath()
+     */
     PlaceholderPath placeholderPath = new PlaceholderPath();
+    /**
+     * neue Klasseninstanz für die Klasse CombinePartsToFile()
+     */
+    CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
+    /**
+     * neue Klasseninstanz für die Klasse MoveFile()
+     */
+    MoveFile moveFile = new MoveFile();
+    /**
+     * neue Klasseninstanz für die Klasse FolderHierarchy()
+     */
+    FolderHierarchy folderHierarchy = new FolderHierarchy();
+    /**
+     * neue Klasseninstanz für die Klasse TempDir()
+     */
     TempDir tempDir = new TempDir();
 
+    /**
+     * Name, der Datei, die in das DragNDrop Feld kopiert wurde
+     */
     public static String fileName = "-";
+    /**
+     * Pfad , der Datei, die in das DragNDrop Feld kopiert wurde
+     * */
     public static String filePath = "-";
-    File treeViewFile;
+    /**
+     * Boolean für Synchronisation für ReplaceDialog_fxmlController()
+     */
     public static boolean waiting = false;
 
     //Scenebuilder-Elemente
@@ -129,31 +159,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                  
             }
         }
-        //TreeView
-        /*
-        String homeDir = System.getProperty("user.home");
-        String tempTree = homeDir + "//Desktop";
-        try {
-            if(tempDir.tempDirExists() == true) {
-                try {
-                    tempTree = tempDir.getTempDir();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                tempTree = placeholderPath.replacePlaceholder(tempTree);
-                System.out.println(tempTree);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        treeViewFile = new File(tempTree);
-        try {
-            treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
     }
 
     /**
@@ -307,8 +312,6 @@ public class Main_fxmlController extends Thread implements Initializable {
                     addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());
                     droppedPathLabel.setText("-");
                     filePath = null;
-                    //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
-
                     //Datei existier bereits, Anwender wird in einem Dialog gefragt, ob Datei ersetzt werden soll
                 } else {
                     Parent rootReplace;
@@ -371,8 +374,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                                 //System.out.println("Table Row deleted");
                             }
 
-                            addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());
-                            //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
+                            addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());                     
                         }
                     }
 
@@ -419,7 +421,7 @@ public class Main_fxmlController extends Thread implements Initializable {
      * speichert
      *
      * @param path
-     * @return
+     * @return Objekt mit Informationen über die Original-Datei
      * @throws IOException
      * @throws FileNotFoundException
      * @throws NoSuchAlgorithmException

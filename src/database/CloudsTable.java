@@ -21,7 +21,7 @@ public class CloudsTable {
      * Überprüft, ob in der Datenbank bereits diese Cloud gespeichert wurde
      *
      * @param cloudNumber ID der Cloud, die ausgewählt wurde
-     * @return
+     * @return boolean, ob Cloud bereits gespeichert wurde
      * @throws SQLException
      */
     public boolean cloudExists(int cloudNumber) throws SQLException {
@@ -62,8 +62,8 @@ public class CloudsTable {
     /**
      * Speichert die ausgewählte Cloud in der Datenbank
      *
-     * @param cloudName
-     * @return
+     * @param cloudName Objekt Clouds
+     * @return 1
      * @throws SQLException
      */
     public int saveCloud(Clouds cloudName) throws SQLException {
@@ -114,7 +114,7 @@ public class CloudsTable {
     /**
      * Gibt die Anzahl der gespeicherten Clouds zurück
      *
-     * @return
+     * @return Anzahl der gespeicherten Clouds
      * @throws SQLException
      */
     public int getNumberOfCloudsFromDatabase() throws SQLException {
@@ -152,7 +152,7 @@ public class CloudsTable {
      * Gibt ein double-Array mit den Speicherkapazitäten aller Clouds, die in
      * der Datenbank gespeichert sind zurück
      *
-     * @return int[] size
+     * @return Interger_array mit den Speicherkapazitäten der gespeicherten Clouds
      * @throws SQLException
      */
     public int[] getCloudSize() throws SQLException {
@@ -190,8 +190,8 @@ public class CloudsTable {
     /**
      * Gibt den Pfad der gewünschten Cloud zurück
      *
-     * @param index
-     * @return
+     * @param index Index des Pfades, der zurückgegeben werden soll
+     * @return Pfad der gewünschten Cloud
      * @throws SQLException
      */
     public String getCloudsPathsFromDatabase(int index) throws SQLException {
@@ -235,7 +235,7 @@ public class CloudsTable {
      * Löscht früher ausgwählte Clouds, die nun vom Anwender nicht mehr
      * gebraucht werden
      *
-     * @param numberOfClouds
+     * @param numberOfClouds Anzahl der zu löschenden Clouds
      * @throws SQLException
      */
     public void deleteCloudFromDatabase(int numberOfClouds) throws SQLException {
@@ -303,9 +303,9 @@ public class CloudsTable {
     
     /**
      * Ersetzt eine alte Cloud durch eine neue Cloud
-     * @param newCloud
-     * @param cloudSize
-     * @param id
+     * @param newCloud neue Cloud
+     * @param cloudSize Größe der neuen Cloud
+     * @param id Id der neuen Cloud
      * @throws SQLException 
      */
     public void updateCloud(String newCloud, int cloudSize, int id) throws SQLException {
@@ -343,7 +343,7 @@ public class CloudsTable {
      * Aktualisiert die Anzahl der Clouds in der Datenbank, sobald diese sich
      * ändert
      *
-     * @param numberOfClouds
+     * @param numberOfClouds Neue Anzahl der Clouds
      * @throws SQLException
      */
     public void updateCloudNumber(int numberOfClouds) throws SQLException {

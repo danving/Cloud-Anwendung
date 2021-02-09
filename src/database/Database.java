@@ -39,7 +39,7 @@ public class Database {
     /**
      * Stellt die Verbindung zur Datenbank her
      *
-     * @return
+     * @return Verbindung 
      * @throws SQLException
      */
     public static Connection getDBConnection() throws SQLException {

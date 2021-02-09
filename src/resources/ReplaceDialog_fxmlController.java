@@ -18,6 +18,9 @@ import javafx.stage.Stage;
  * @author danvi
  */
 public class ReplaceDialog_fxmlController implements Initializable {
+    /**
+     * boolean, ob Dateien ersetzt werden sollen
+     */
     public static boolean replace = false;
 
     @FXML

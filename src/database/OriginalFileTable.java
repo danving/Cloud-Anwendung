@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Verwaltet die Original-Datei-Tabell der Datenbank
+ * Verwaltet die Original-Datei-Tabelle der Datenbank
  *
  * @author danvi
  */
@@ -52,8 +52,8 @@ public class OriginalFileTable {
     /**
      * Überprüft, ob die eingefügte Datei bereits in der Cloud existiert
      *
-     * @param fileName
-     * @return
+     * @param fileName Name der Datei, die überprüft werden soll
+     * @return boolean, ob Datei bereits in DB gespeichert wurde
      * @throws SQLException
      */
     public boolean fileExists(String fileName) throws SQLException {
@@ -93,8 +93,8 @@ public class OriginalFileTable {
     /**
      * Speichert die Daten der eingefügten Datei in die Datenbank
      *
-     * @param originalFile
-     * @return
+     * @param originalFile Objekt OriginalFile
+     * @return 0
      * @throws SQLException
      */
     public int saveOriginalFile(OriginalFile originalFile) throws SQLException {
@@ -144,9 +144,9 @@ public class OriginalFileTable {
 
     /**
      * Gibt die Gesamzanzahl der Dateien zurück, die in die Clouds verschoben
-     * wurden.
+     * wurden und in der DB gespeichert sind
      *
-     * @return
+     * @return Anzahl der Dateien, die in der DB gespeichert wurden
      * @throws SQLException
      */
     public int getNumberOfFiles() throws SQLException {
@@ -181,7 +181,7 @@ public class OriginalFileTable {
      * Gibt den Letzten Pfad einer Datei zurück, der in die Datenbank eingefügt
      * wurde
      *
-     * @return
+     * @return letzter gespeicherte Pfad
      * @throws SQLException
      */
     public String getLastEntryPath() throws SQLException {
@@ -216,7 +216,7 @@ public class OriginalFileTable {
      * Gibt den Datei-Name der letzten Datei zurück, der in die Datenbank
      * eingefügt
      *
-     * @return
+     * @return letzter gespeicherter Name
      * @throws SQLException
      */
     public String getLastEntryName() throws SQLException {
@@ -251,7 +251,7 @@ public class OriginalFileTable {
      * Gibt den Typ der letzten Datei zurück, der in die Datenbank eingefügt
      * wurde
      *
-     * @return
+     * @return letzter gespeicherter Datentyp
      * @throws SQLException
      */
     public String getLastEntryType() throws SQLException {
@@ -286,7 +286,7 @@ public class OriginalFileTable {
      * Gibt die Größe der letzten Datei zurück, die in die Datenbank eingefügt
      * wurde
      *
-     * @return
+     * @return letzte gespeicherte Datei-Größe
      * @throws SQLException
      */
     public String getLastEntrySize() throws SQLException {
@@ -321,7 +321,7 @@ public class OriginalFileTable {
      * Gibt das Datum der Datei zurück, die als letztes in die Datenbank
      * eingefügt wurde
      *
-     * @return
+     * @return letztes gespeichertes Datum
      * @throws SQLException
      */
     public String getLastEntryDate() throws SQLException {
@@ -356,7 +356,7 @@ public class OriginalFileTable {
      * Gibt die Id der letzten Datei zurück, die in die Datenbank eingefügt
      * wurde
      *
-     * @return
+     * @return letzte gespeicherte id
      * @throws SQLException
      */
     public String getLastEntryId() throws SQLException {
@@ -390,7 +390,7 @@ public class OriginalFileTable {
     /**
      * Gibt eine Liste aller gespeicherten Dateien, in der Datenbank zurück
      *
-     * @return
+     * @return Liste mit alles bisher gespeicherten Dateien
      * @throws SQLException
      */
     public List getOriginalFilesForTable() throws SQLException {
@@ -442,11 +442,11 @@ public class OriginalFileTable {
     /**
      * Gibt den Typ der gewünschten Datei zurück
      *
-     * @param id
-     * @return
+     * @param name Name der Datei
+     * @return Datei-Typ einer gewünschten Datei
      * @throws SQLException
      */
-    public String getTypeOfFile(String id) throws SQLException {
+    public String getTypeOfFile(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         String type = "";
@@ -456,7 +456,7 @@ public class OriginalFileTable {
             String query = "SELECT type FROM originalfile WHERE name = ?";
             statement = connection.prepareStatement(query);
             int counter = 1;
-            statement.setString(counter++, id);
+            statement.setString(counter++, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 type = resultSet.getString("type");
@@ -478,11 +478,11 @@ public class OriginalFileTable {
     /**
      * Gibt die Checksumme der gewünschten Datei zurück
      *
-     * @param id Name der Datei, deren Checksumme zurück gegeben werden soll
-     * @return
+     * @param name Name der Datei, deren Checksumme zurück gegeben werden soll
+     * @return Checksumme, der gewünschten Datei
      * @throws SQLException
      */
-    public String getCheckSum(String id) throws SQLException {
+    public String getCheckSum(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         String checkSum = "";

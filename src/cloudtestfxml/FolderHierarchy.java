@@ -13,8 +13,8 @@ public class FolderHierarchy {
     /**
      * Zeigt rekursiv die Ordnerstruktur des ausgwählten Ordners an
      * (Alle Unter-Ordner und Dateien, die sich darin befinden)
-     * @param directory
-     * @return
+     * @param directory Ordner der dargestellt werden soll
+     * @return TreeView
      * @throws FileNotFoundException 
      */
     public TreeItem<String> displayFolderTreeView(File directory) throws FileNotFoundException { //Returns a TreeItem representation of the specified directory

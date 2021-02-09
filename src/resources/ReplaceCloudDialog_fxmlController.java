@@ -5,9 +5,6 @@
  */
 package resources;
 
-import database.CloudsTable;
-import database.OriginalFileTable;
-import database.PartFilesTable;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -21,8 +18,13 @@ import javafx.stage.Stage;
  * @author danvi
  */
 public class ReplaceCloudDialog_fxmlController implements Initializable {
-    
+    /**
+     * boolean, ob Dateien gelöscht werden sollen
+     */
     public static boolean deleteContent;
+    /**
+     * boolean, ob Dateien verschoben werden sollen
+     */
     public static boolean moveContent;
     
     @FXML
@@ -35,11 +37,18 @@ public class ReplaceCloudDialog_fxmlController implements Initializable {
         
     }
     
+    /**
+     * Schließen des Dialoges
+     */
     public void closeDialog() {
         Stage stage = (Stage) closeDialogButton.getScene().getWindow();
         stage.close();
     }
     
+    /**
+     * Gibt dem Einstellungsfenster Bescheid, dass Dateien gelöscht werden sollen
+     * @throws SQLException 
+     */
     public void deleteContent() throws SQLException {
         synchronized (this) {
             Configuration_fxmlController.waitingReplaceCloud = true;
@@ -56,6 +65,10 @@ public class ReplaceCloudDialog_fxmlController implements Initializable {
         
     }
     
+    /**
+     * Gibt dem Einstellungsfenster Bescheid, dass Dateien verschoben werden sollen
+     * @throws SQLException 
+     */
     public void moveContent() throws SQLException {
        synchronized (this) {
             Configuration_fxmlController.waitingReplaceCloud = true;
