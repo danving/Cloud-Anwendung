@@ -24,6 +24,9 @@ import java.lang.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.Parent;
@@ -42,6 +45,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Klasse zur Verwaltung des Hauptfensters der Anwendung
@@ -52,9 +56,9 @@ public class Main_fxmlController extends Thread implements Initializable {
 
     private static final Logger logger = Logger.getLogger(Main_fxmlController.class.getName());
     //Klasseninstanzen
-    OriginalFileTable originalFileTable = new OriginalFileTable();
+    OriginalFileTable originalfileTable = new OriginalFileTable();
     CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
-    PartFilesTable partfiles = new PartFilesTable();
+    PartFilesTable partfilesTable = new PartFilesTable();
     CloudsTable cloudsTable = new CloudsTable();
     CheckSumSHA checkSum = new CheckSumSHA();
     MoveFile moveFile = new MoveFile();
@@ -66,8 +70,8 @@ public class Main_fxmlController extends Thread implements Initializable {
     public static String filePath = "-";
     File treeViewFile;
     public static boolean waiting = false;
-    public static boolean waitDeleteTableView = false;
 
+    //Scenebuilder-Elemente
     @FXML
     private MenuItem exitButton;
     @FXML
@@ -95,30 +99,40 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     private ProgressIndicator progressIndicator;
 
+    
+
+
     /**
      * Initialisiert die Tabelle mit allen Dateien, die sich bereits in der
-     * Datenbank befinden und den TreeView der die Ordnerhierarchy anzeigt
+     * Datenbank befinden
      *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        //Alle Dateien, die sich in der Cloud befinden, werden über die Datenbank abgefragt und in eine Liste gespeichert
         List<OriginalFile> filesTable = new ArrayList<>();
         try {
-            filesTable = originalFileTable.getOriginalFilesForTable();
+            filesTable = originalfileTable.getOriginalFilesForTable();
         } catch (SQLException ex) {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        //Falls sich Dateien in der Cloud befinden, werden diese in der Tabelle angezeigt
         if (filesTable != null) {
             for (int i = 0; i < filesTable.size(); i++) {
+                CloudTableView tempEntry = new CloudTableView(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
+                
                 try {
                     addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
                 } catch (SQLException ex) {
                     Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                 
             }
         }
+
         /*
         String homeDir = System.getProperty("user.home");
         String tempTree = homeDir + "//Desktop";
@@ -143,7 +157,6 @@ public class Main_fxmlController extends Thread implements Initializable {
             Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
         }
          */
-
     }
 
     /**
@@ -155,13 +168,18 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     public void configButton(ActionEvent event) {
         Parent root;
+        URL configURL = getClass().getResource("Configuration_fxml.fxml"); 
         try {
-            FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("Configuration_fxml.fxml"));
-            root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Einstellungen");
-            stage.setScene(new Scene(root, 600, 520));
-            stage.showAndWait();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(configURL);
+            root = loader.load(configURL.openStream());
+            Configuration_fxmlController configController = (Configuration_fxmlController) loader.getController();
+            configController.mainTableView = cloudTableView;
+            Stage configStage = new Stage();
+            configStage.setTitle("Einstellungen");
+            configStage.setScene(new Scene(root, 600, 520));
+            configStage.showAndWait();
+           
 
         } catch (IOException e) {
         }
@@ -178,6 +196,7 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     public void dragAndDrop(DragEvent e) throws IOException {
 
+        //Überprüft, ob sich eine Datei über dem Feld befinden
         dragTarget.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
@@ -189,11 +208,13 @@ public class Main_fxmlController extends Thread implements Initializable {
             }
         });
 
+        //Überprüft, ob eine Datei in das Feld abgelegt wurde
         dragTarget.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
+                //Wenn eine Datei abgelegt wurde, zeigt das Label den Pfad an
                 if (db.hasFiles()) {
                     filePath = db.getFiles().toString();
                     droppedPathLabel.setText(filePath);
@@ -243,7 +264,7 @@ public class Main_fxmlController extends Thread implements Initializable {
             long[] partsSize = moveFile.calculateCloudSpace((filePath.substring(1, filePath.length() - 1)), cloudsTable.getNumberOfCloudsFromDatabase());
             for (int i = 0; i < cloudsTable.getNumberOfCloudsFromDatabase(); i++) {
                 long capacityPerCloud = ((long) cloudsize[i] * 1073741824); // * 1073741824, für GB in Byte
-                long partsCapacity = partfiles.getCloudCapacity(i + 1) + partsSize[i];
+                long partsCapacity = partfilesTable.getCloudCapacity(i + 1) + partsSize[i];
                 if (partsCapacity >= capacityPerCloud) {
                     isSmaller = false;
                 }
@@ -261,14 +282,14 @@ public class Main_fxmlController extends Thread implements Initializable {
                 stage.showAndWait();
             } else {
                 //Überprüfen, ob die Datei bereits in der Cloud/Datenbank existiert
-                if (!originalFileTable.fileExists(fileName)) {
+                if (!originalfileTable.fileExists(fileName)) {
                     OriginalFile originalFile = createFileObject(filePath);
-                    int fileId = originalFileTable.saveOriginalFile(originalFile);
+                    int fileId = originalfileTable.saveOriginalFile(originalFile);
                     /*Wenn die Datei sehr groß ist, und das verschieben viel Zeit in anspruch nimmt,
                         dann wird ein Dialog Fenster geöffnet, dass dem Anwender mitteilt, dass es
                         noch ein wenig dauern wird
                      */
-                    String fileSize = originalFileTable.getLastEntrySize();
+                    String fileSize = originalfileTable.getLastEntrySize();
                     int size = 0;
                     for (int i = fileSize.length() - 1; i >= 0; i--) {
                         if (fileSize.charAt(i) == ' ') {
@@ -285,7 +306,8 @@ public class Main_fxmlController extends Thread implements Initializable {
                     moveFile.moveFile();
                     progressLabel.setOpacity(0);
                     progressIndicator.setOpacity(0);
-                    addTableViewEntry(originalFileTable.getLastEntryName(), originalFileTable.getLastEntryDate(), originalFileTable.getLastEntryType(), originalFileTable.getLastEntrySize());
+                    //Einfügen, der in die Cloud verschobene Datei, in die Tabelle
+                    addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());
                     droppedPathLabel.setText("-");
                     filePath = null;
                     //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
@@ -314,16 +336,16 @@ public class Main_fxmlController extends Thread implements Initializable {
                     //System.out.println("Sync: " + dialog.replace);
                     //Wenn Datei ersetzt werden soll
                     if (dialog.replace) {
-                        originalFileTable.deleteOriginalFile(fileName);
+                        originalfileTable.deleteOriginalFile(fileName);
 
-                        partfiles.deletePartsFiles(fileName);
+                        partfilesTable.deletePartsFiles(fileName);
                         OriginalFile originalFile = createFileObject(filePath);
-                        int fileId = originalFileTable.saveOriginalFile(originalFile);
+                        int fileId = originalfileTable.saveOriginalFile(originalFile);
                         /*Wenn die Datei sehr groß ist, und das verschieben viel Zeit in anspruch nimmt,
                         dann wird ein Dialog Fenster geöffnet, dass dem Anwender mitteilt, dass es
                         noch ein wenig dauern wird
                          */
-                        String fileSize = originalFileTable.getLastEntrySize();
+                        String fileSize = originalfileTable.getLastEntrySize();
                         int size = 0;
                         for (int i = fileSize.length() - 1; i >= 0; i--) {
                             if (fileSize.charAt(i) == ' ') {
@@ -352,7 +374,7 @@ public class Main_fxmlController extends Thread implements Initializable {
                                 //System.out.println("Table Row deleted");
                             }
 
-                            addTableViewEntry(originalFileTable.getLastEntryName(), originalFileTable.getLastEntryDate(), originalFileTable.getLastEntryType(), originalFileTable.getLastEntrySize());
+                            addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());
                             //treeview.setRoot(folderHierarchy.displayFolderTreeView(treeViewFile));
                         }
                     }
@@ -379,7 +401,7 @@ public class Main_fxmlController extends Thread implements Initializable {
         if (click.getClickCount() == 2) {
             if (cloudTableView.getSelectionModel().getSelectedItem() != null) {
                 CloudTableView file = (CloudTableView) cloudTableView.getSelectionModel().getSelectedItem();
-                combinePartsToFile.combinePartsToFile(partfiles.getPartsSize(file.getFile()), file.getFile(), file.getType(), true);
+                combinePartsToFile.combinePartsToFile(partfilesTable.getPartsSize(file.getFile()), file.getFile(), file.getType(), true);
             }
         }
     }
@@ -392,9 +414,9 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     public void exit(ActionEvent e) {
         System.exit(0);
-        
+
     }
-    
+
     /**
      * Erstellt ein Objekt, welches die Informationen zu Original-Datei
      * speichert
@@ -476,23 +498,7 @@ public class Main_fxmlController extends Thread implements Initializable {
         cloudTableView.getItems().add(new CloudTableView(file, date, type, size));
 
     }
+    
+    
 
-    public void deleteTableView() {
-        Configuration_fxmlController config = new Configuration_fxmlController();
-        synchronized (config) {
-            try {
-                while(waitDeleteTableView) {
-                    config.wait();
-                }
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        System.out.println(config.deleteTableView);
-        if(config.deleteTableView) {
-            cloudTableView.getItems().clear();
-        }
-        
-    }
 }

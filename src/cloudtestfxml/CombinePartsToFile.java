@@ -1,7 +1,6 @@
 package cloudtestfxml;
 
 import database.CloudsTable;
-import database.OriginalFileTable;
 import database.PartFilesTable;
 import database.TempDir;
 import java.awt.Desktop;
@@ -13,8 +12,7 @@ import java.util.logging.*;
 
 /**
  * Die Klasse CombinePartsToFile fügt die entstandenen Teil-Dateien wieder
- * zusammen. Wird aufgerufen, sobald der Anwender auf die Datei in der Tabelle 
- * im Hauptfenster klickt.
+ * zusammen.
  *
  * @author danvi
  */
@@ -22,8 +20,7 @@ public class CombinePartsToFile {
 
     //KlassenInstanzen
     CloudsTable cloudsTable = new CloudsTable();
-    PartFilesTable partFilesTable = new PartFilesTable();
-    OriginalFileTable originalFileTable = new OriginalFileTable();
+    PartFilesTable partfilesTable = new PartFilesTable();
     PlaceholderPath placeholderPath = new PlaceholderPath();
     TempDir tempDir = new TempDir();
 
@@ -39,7 +36,7 @@ public class CombinePartsToFile {
      * @throws SQLException 
      */
     public void combinePartsToFile(long sizeOfParts[], String name, String type, boolean open) throws FileNotFoundException, IOException, SQLException {
-        final int numberOfParts = partFilesTable.getNumberOfPartsPerName(name);
+        final int numberOfParts = partfilesTable.getNumberOfPartsPerName(name);
         String tempDirPath = tempDir.getTempDir();
         tempDirPath = placeholderPath.replacePlaceholder(tempDirPath);
         File originalFile = new File(tempDirPath + "\\" + name + "_Original" + type);
@@ -55,12 +52,14 @@ public class CombinePartsToFile {
 
         //String Array für die Teil-Pfade
         String[] inPath = new String[numberOfParts];
-        inPath = partFilesTable.getPartsPathPerName(name);
+        inPath = partfilesTable.getPartsPathPerName(name);
         for (int i = 0; i < numberOfParts; i++) {
             inPath[i] = placeholderPath.replacePlaceholder(inPath[i]);
             //System.out.println(inPath[i]);
         }
 
+        //InputStream = TeilDateien
+        //OutputStream = Das was in die zusammengefügte Datei gespeichert wird
         InputStream in[] = new InputStream[numberOfParts];
         OutputStream out = new BufferedOutputStream(new FileOutputStream(originalFile));
         try {
@@ -69,7 +68,7 @@ public class CombinePartsToFile {
                 in[part] = new BufferedInputStream(new FileInputStream(inPath[part]));
             }
             
-            byte[] buf = new byte[partFilesTable.getChunkSize(name)]; //Byte Array mit der Chunk-Länge, die zum aufteilen benutzt wurde
+            byte[] buf = new byte[partfilesTable.getChunkSize(name)]; //Byte Array mit der Chunk-Länge, die zum aufteilen benutzt wurde
             long[] remain = sizeOfParts.clone();
             for (boolean done = false; !done;) {
                 done = true;
@@ -105,6 +104,11 @@ public class CombinePartsToFile {
         
     }
     
+    /**
+     * Falls die Teil-Dateien zusammengefügt werden, um die ursprüngliche Datei
+     * anzuzeigen,wird sie mit dieser Methode geöffnet
+     * @param file 
+     */
     public void openFile(File file) {
         try {
             //Öffnet die neu erstellte Datei

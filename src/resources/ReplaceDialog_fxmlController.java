@@ -1,9 +1,4 @@
 package resources;
-
-import cloudtestfxml.FolderHierarchy;
-import cloudtestfxml.MoveFile;
-import database.OriginalFileTable;
-import database.PartFilesTable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;

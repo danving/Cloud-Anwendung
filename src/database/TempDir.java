@@ -139,6 +139,11 @@ public class TempDir {
         return 0;
     }
 
+    /**
+     * Gibt den gespeicherten Pfad des Temp-Ordners zurück
+     * @return
+     * @throws SQLException 
+     */
     public String getTempDir() throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;

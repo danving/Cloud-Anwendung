@@ -40,12 +40,7 @@ public class Main extends Application {
         stage.setTitle("Cloud Anwendung");
         stage.setScene(scene);
         stage.show();
-        stage.setOnHidden(new EventHandler<WindowEvent>() {
-		@Override
-		public void handle(WindowEvent event) {
-			stage.show();
-		}
-	});
+
 
     }
 }

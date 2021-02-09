@@ -20,6 +20,35 @@ public class PartFilesTable {
     private static final Logger logger = Logger.getLogger(PartFilesTable.class.getName());
 
     /**
+     * Setzte den Auto-Incement auf 1 zurück
+     */
+    public void resetAutoIncrement() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "DELETE FROM sqlite_sequence WHERE name = 'partfiles'";
+            statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+    }
+
+    /**
      * Überprüft, ob die Teil-Datei bereits in die Datenbank eingefügt wurde
      *
      * @param partPath
@@ -109,10 +138,10 @@ public class PartFilesTable {
     }
 
     /**
-     * Gibt ein String-Array mit allen Namen der Partfiles, ohne
-     * Dupilkationen
+     * Gibt ein String-Array mit allen Namen der Partfiles, ohne Dupilkationen
+     *
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public String[] getNamesOfParts() throws SQLException {
         String[] partsName = new String[originalfile.getNumberOfFiles()];
@@ -149,7 +178,6 @@ public class PartFilesTable {
     /**
      * Gibt die Anzahl der Teil-Dateien zurück
      *
-     * @param id Name der Original-Datei
      * @return
      * @throws SQLException
      */
@@ -183,8 +211,14 @@ public class PartFilesTable {
         //System.out.println(numberOfParts);
         return numberOfParts;
     }
-    
-    
+
+    /**
+     * Gibt die Anzahl der Teil-Dateien mit einem bestimmten Namen zurück
+     *
+     * @param name Name der gewünschten Teil-Dateien
+     * @return
+     * @throws SQLException
+     */
     public int getNumberOfPartsPerName(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -216,17 +250,16 @@ public class PartFilesTable {
         //System.out.println(numberOfParts);
         return numberOfParts;
     }
-    
 
     /**
      * Gibt die Chunk-Größe zurück, die zum Teilen der gewünschten Datei
      * verwendet wurde
      *
-     * @param id Name der Datei, deren Chunk-Größe zurück gegeben werden soll
+     * @param name Name der Datei, deren Chunk-Größe zurück gegeben werden soll
      * @return
      * @throws SQLException
      */
-    public int getChunkSize(String id) throws SQLException {
+    public int getChunkSize(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         int chunkSize = 0;
@@ -236,7 +269,7 @@ public class PartFilesTable {
             connection.setAutoCommit(false);
             String query = "SELECT chunksize FROM partfiles WHERE name = ?";
             statement = connection.prepareStatement(query);
-            statement.setString(counter++, id);
+            statement.setString(counter++, name);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -261,7 +294,6 @@ public class PartFilesTable {
     /**
      * Gibt die Pfade der Teil-Dateien zurück
      *
-     * @param name Name der Original-Datei
      * @return
      * @throws SQLException
      */
@@ -293,17 +325,17 @@ public class PartFilesTable {
                 connection.close();
             }
         }
-        
-         
+
         return paths;
     }
-    
+
     /**
-     * Gibt in einem String[] die Pfade der Teil-Dateien von einem bestimmt Part
-     * zurück
-     * @param part
+     * Gibt in einem String[] die Pfade der Teil-Dateien von einem bestimmt
+     * Namen zurück
+     *
+     * @param name
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public String[] getPartsPathPerName(String name) throws SQLException {
         Connection connection = null;
@@ -343,13 +375,13 @@ public class PartFilesTable {
     }
 
     /**
-     * Gibt die Größe der Teil-Dateien zurück
+     * Gibt die Größe der Teil-Dateien mit einem bestimmten Namen zurück
      *
-     * @param id Name der Original-Datei
+     * @param name Name der Original-Datei
      * @return
      * @throws SQLException
      */
-    public long[] getPartsSize(String id) throws SQLException {
+    public long[] getPartsSize(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         long partsSize[] = new long[5];
@@ -360,7 +392,7 @@ public class PartFilesTable {
             connection.setAutoCommit(false);
             String query = "SELECT partsSize FROM partfiles WHERE name = ?";
             statement = connection.prepareStatement(query);
-            statement.setString(counter++, id);
+            statement.setString(counter++, name);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -390,10 +422,10 @@ public class PartFilesTable {
      * Löscht einen gewünschten Eintrag in der Datenbank, indem der Name
      * mitgeben wird
      *
-     * @param id Name der zu löschenden Datei
+     * @param name Name der zu löschenden Datei
      * @throws SQLException
      */
-    public void deletePartsFiles(String id) throws SQLException {
+    public void deletePartsFiles(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
@@ -401,7 +433,7 @@ public class PartFilesTable {
             connection.setAutoCommit(false);
             String query = "DELETE FROM partfiles WHERE name = ?";
             statement = connection.prepareStatement(query);
-            statement.setString(1, id);
+            statement.setString(1, name);
             statement.executeUpdate();
             if (!connection.getAutoCommit()) {
                 connection.commit();

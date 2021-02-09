@@ -22,8 +22,8 @@ public class MoveFile {
     private static final Logger logger = Logger.getLogger(MoveFile.class.getName());
     //Klasseninstanzen
     CloudsTable cloudsTable = new CloudsTable();
-    OriginalFileTable originalFileTable = new OriginalFileTable();
-    PartFilesTable partFilesTable = new PartFilesTable();
+    OriginalFileTable originalfileTable = new OriginalFileTable();
+    PartFilesTable partfilesTable = new PartFilesTable();
     PlaceholderPath placeholderPath = new PlaceholderPath();
     //Globale Variablen
     long sizePerPart[];
@@ -39,9 +39,9 @@ public class MoveFile {
      * @throws SQLException
      */
     public void moveFile() throws IOException, FileNotFoundException, SQLException {
-
-        splitFile(originalFileTable.getLastEntryPath(), cloudsTable.getNumberOfCloudsFromDatabase(), calculateCloudSpace(originalFileTable.getLastEntryPath(), cloudsTable.getNumberOfCloudsFromDatabase()));
-        String deleteFile = placeholderPath.replacePlaceholder(originalFileTable.getLastEntryPath());
+        
+        splitFile(originalfileTable.getLastEntryPath(), cloudsTable.getNumberOfCloudsFromDatabase(), calculateCloudSpace(originalfileTable.getLastEntryPath(), cloudsTable.getNumberOfCloudsFromDatabase()));
+        String deleteFile = placeholderPath.replacePlaceholder(originalfileTable.getLastEntryPath());
         Files.delete(Paths.get(deleteFile));
         createUserFile(chunkSize);
 
@@ -49,7 +49,7 @@ public class MoveFile {
 
     /**
      * Berechnet die Anzahl der Bytes, die jede Cloud pro Datei bekommt, in
-     * Abhängigkeit der Größe der Cloud und berechnet daraus die Anzahl der
+     * Abhängigkeit der angegebenen Größe der Cloud und berechnet daraus die Anzahl der
      * Bytes, die jeder Datei-Part von der Originaldatei bekommen soll
      *
      * @param filePath Dateipfad der Datei, die verschoben werden soll
@@ -105,6 +105,9 @@ public class MoveFile {
     /**
      * Teilt die Original-Datei im Round-Robin Verfahren chunk-weise in
      * Teil-Dateien auf.
+     * Dabei wird standardmäßig eine Größe von 4Kib gewählt. Wenn die Datei
+     * kleiner als ein Chunk sein sollte, wird sie die Gesamtgröße durch die 
+     * Anzahl der Clouds geteilt, was dann die Teil-Dateien ergibt
      *
      * @param filePath Dateipfad, der zu verschiebenen Datei
      * @param numberOfClouds Anzahl der zu verwendenen Clouds
@@ -116,8 +119,8 @@ public class MoveFile {
     public void splitFile(String filePath, int numberOfClouds, long sizeOfParts[]) throws FileNotFoundException, IOException, SQLException {
         chunkSize = 0;
         final int numberOfParts = sizeOfParts.length;
-        String name = originalFileTable.getLastEntryName();
-        String fileType = originalFileTable.getLastEntryType();
+        String name = originalfileTable.getLastEntryName();
+        String fileType = originalfileTable.getLastEntryType();
 
         //String Array mit den Teil-Dateipfaden
         String[] outPath = new String[numberOfClouds];
@@ -188,6 +191,7 @@ public class MoveFile {
                 }
             }
 
+        //Schließen der Streams
         } finally {
             if (in != null) {
                 in.close();
@@ -216,7 +220,7 @@ public class MoveFile {
             public boolean accept(File dir, String name) {
                 String lowercaseName = name.toLowerCase();
                 try {
-                    if (lowercaseName.contains(originalFileTable.getLastEntryName().toLowerCase())) {
+                    if (lowercaseName.contains(originalfileTable.getLastEntryName().toLowerCase())) {
                         return true;
                     } else {
                         return false;
@@ -236,7 +240,6 @@ public class MoveFile {
             String temp = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
             directoryPath = new File(temp);
             File filesList[] = directoryPath.listFiles(textFilefilter);
-            //TODO bei manchen pdf bricht er ab?? index out ouf bounds
             //System.out.println("List of the text files in the specified directory:" + filesList.length);
             for (File files : filesList) {
                 partsPath[j] = files.getAbsolutePath();
@@ -248,8 +251,8 @@ public class MoveFile {
         //Speichern der Teil-Dateien in die Datenbank
         for (int i = 0; i < partsPath.length; i++) {
             try {
-                PartFiles partFiles = this.createPartFileObject(originalFileTable.getLastEntryId() + i, originalFileTable.getLastEntryName(), partsPath[i], i + 1, sizePerPart[i], chunkSize);
-                int userId = partFilesTable.savePartFile(partFiles);
+                PartFiles partFiles = this.createPartFileObject(originalfileTable.getLastEntryId() + i, originalfileTable.getLastEntryName(), partsPath[i], i + 1, sizePerPart[i], chunkSize);
+                int userId = partfilesTable.savePartFile(partFiles);
             } catch (SQLException exception) {
                 logger.log(Level.SEVERE, exception.getMessage());
             }

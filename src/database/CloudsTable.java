@@ -112,7 +112,7 @@ public class CloudsTable {
     }
 
     /**
-     * Gibt die Anzahl der ausgewählten Clouds zurück
+     * Gibt die Anzahl der gespeicherten Clouds zurück
      *
      * @return
      * @throws SQLException

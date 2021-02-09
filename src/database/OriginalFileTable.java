@@ -20,6 +20,36 @@ public class OriginalFileTable {
     public static final Logger logger = Logger.getLogger(OriginalFileTable.class.getName());
 
     /**
+     * Setzte den Auto-Incement auf 1 zurück
+     */
+    public void resetAutoIncrement() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Database.getDBConnection();
+            connection.setAutoCommit(false);
+            String query = "DELETE FROM sqlite_sequence WHERE name = 'originalfile'";
+            statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            exception.printStackTrace();
+        } finally {
+            if (null != statement) {
+                statement.close();
+            }
+
+            if (null != connection) {
+                connection.close();
+            }
+        }
+
+    }
+
+    /**
      * Überprüft, ob die eingefügte Datei bereits in der Cloud existiert
      *
      * @param fileName
@@ -33,7 +63,7 @@ public class OriginalFileTable {
         try {
             connection = Database.getDBConnection();
             connection.setAutoCommit(false);
-            String query = "SELECT * FROM originalFile WHERE name = ?";
+            String query = "SELECT * FROM originalfile WHERE name = ?";
             statement = connection.prepareStatement(query);
             int counter = 1;
             statement.setString(counter++, fileName);
@@ -111,12 +141,13 @@ public class OriginalFileTable {
 
         return 0;
     }
-    
+
     /**
-     * Gibt die Gesamzanzahl der Dateien zurück, die in die Clouds
-     * verschoben wurden.
+     * Gibt die Gesamzanzahl der Dateien zurück, die in die Clouds verschoben
+     * wurden.
+     *
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public int getNumberOfFiles() throws SQLException {
         int number = 0;
@@ -132,7 +163,7 @@ public class OriginalFileTable {
             while (resultSet.next()) {
                 number = resultSet.getInt(1);
             }
-        }catch (SQLException exception) {
+        } catch (SQLException exception) {
             logger.log(Level.SEVERE, exception.getMessage());
         } finally {
             if (null != statement) {
@@ -358,8 +389,9 @@ public class OriginalFileTable {
 
     /**
      * Gibt eine Liste aller gespeicherten Dateien, in der Datenbank zurück
-     * @return 
-     * @throws SQLException 
+     *
+     * @return
+     * @throws SQLException
      */
     public List getOriginalFilesForTable() throws SQLException {
         Connection connection = null;
@@ -403,15 +435,16 @@ public class OriginalFileTable {
             System.out.println(i + " " + filesList.get(i).getSize());
             
         }
-        */
+         */
         return filesList;
     }
-    
+
     /**
      * Gibt den Typ der gewünschten Datei zurück
+     *
      * @param id
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public String getTypeOfFile(String id) throws SQLException {
         Connection connection = null;
@@ -507,7 +540,7 @@ public class OriginalFileTable {
             }
         }
     }
-    
+
     /**
      * Löscht alle Einträge aus der Datenbank
      *

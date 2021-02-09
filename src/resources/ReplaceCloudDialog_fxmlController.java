@@ -8,14 +8,9 @@ package resources;
 import database.CloudsTable;
 import database.OriginalFileTable;
 import database.PartFilesTable;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -26,17 +21,12 @@ import javafx.stage.Stage;
  * @author danvi
  */
 public class ReplaceCloudDialog_fxmlController implements Initializable {
-    PartFilesTable partfiles = new PartFilesTable();
-    OriginalFileTable originalfiles = new OriginalFileTable();
-    CloudsTable cloudsTable = new CloudsTable();
     
     public static boolean deleteContent;
     public static boolean moveContent;
     
     @FXML
     private Button deleteContentButton;
-    @FXML
-    private Button moveContentButton;
     @FXML
     private Button closeDialogButton;
 

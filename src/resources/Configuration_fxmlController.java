@@ -21,6 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -42,8 +45,6 @@ import javafx.stage.Stage;
  */
 public class Configuration_fxmlController implements Initializable {
 
-    public String newCloud;
-
     File selectedDir;
     String selectedDirPath[] = new String[5];
     int cloudSize[] = new int[5];
@@ -53,21 +54,22 @@ public class Configuration_fxmlController implements Initializable {
     String tempDirPath;
     String homeDir = System.getProperty("user.home");
 
+    public static boolean waitingReplaceCloud = false;
+    public boolean deleteTableView = false;
+    public TableView mainTableView;
+
     private static final Logger logger = Logger.getLogger(Configuration_fxmlController.class.getName());
+    //Klasseninstanzen
     CloudsTable cloudsTable = new CloudsTable();
-    OriginalFileTable originalfile = new OriginalFileTable();
-    PartFilesTable partfiles = new PartFilesTable();
+    OriginalFileTable originalfileTable = new OriginalFileTable();
+    PartFilesTable partfilesTable = new PartFilesTable();
     CombinePartsToFile combinePartsToFile = new CombinePartsToFile();
     MoveFile moveFile = new MoveFile();
     PlaceholderPath placeholderPath = new PlaceholderPath();
     TempDir tempDir = new TempDir();
     Main_fxmlController mainController = new Main_fxmlController();
-    //Boolean für ReplaceCloudDialog
-    public static boolean waitingReplaceCloud = false;
-    //TODO auf false setzten
-    public boolean deleteTableView = true;
 
-    //Felder und Button für Cloud
+    //Scenebuiler-Elemente
     @FXML
     private Button confirmConfigButton;
     @FXML
@@ -142,6 +144,13 @@ public class Configuration_fxmlController implements Initializable {
 
     }
 
+    /**
+     * öffnet den DirectoryChooser und speichert ausgeählten Pfad als
+     * Temp-Ordner
+     *
+     * @param e
+     * @throws SQLException
+     */
     @FXML
     public void openDirChooserTemp(ActionEvent e) throws SQLException {
         Stage stage = new Stage();
@@ -295,8 +304,7 @@ public class Configuration_fxmlController implements Initializable {
     }
 
     /**
-     * Methode speichert die ausgewählten Pfade der Clouds und ihre
-     * Speicherkapazität in die Datenbank und schließt das Fenster
+     * Methode speichert die festgelegten Einstellungen
      *
      * @param e
      * @throws SQLException
@@ -310,7 +318,7 @@ public class Configuration_fxmlController implements Initializable {
         temp2 = cloudField0.getText();
         temp3 = cloudField1.getText();
 
-        //String array mit Pfaden 
+        //String array mit Pfaden der angegebenen Ordner
         String[] allDirPaths = new String[selectedDirPath.length];
         String[] tempTextField = new String[selectedDirPath.length];
         tempTextField[0] = cloudField0.getText();
@@ -327,6 +335,7 @@ public class Configuration_fxmlController implements Initializable {
 
         }
 
+        //Überprüft, mindestens zwei Ordner ausgewählt wurden
         if (temp1.equals("Es wurde kein Temp-Ordner ausgewählt") || temp1.equals("") || temp2.equals("Es wurde keine Cloud ausgewählt") || temp2.equals("")
                 || temp3.equals("Es wurde keine Cloud ausgewählt") || temp3.equals("")) {
             check = false;
@@ -334,6 +343,7 @@ public class Configuration_fxmlController implements Initializable {
             check = true;
         }
 
+        //Wenn zwei ordner ausgewählt wurden
         if (check == true) {
             if (sizeSpinner0.getValue() != null) {
                 cloudSize[0] = (int) sizeSpinner0.getValue();
@@ -351,18 +361,22 @@ public class Configuration_fxmlController implements Initializable {
                 cloudSize[4] = (int) sizeSpinner4.getValue();
             }
 
+            //Zählt, wie viele Pfade tatsächlich angegeben wurdne
             int numberOfPaths = 0;
             for (int i = 0; i < allDirPaths.length; i++) {
                 if (allDirPaths[i] != null) {
                     numberOfPaths += 1;
                 }
             }
+            //Anzahl der Clouds, die bereits in der DB gespeichert sind
             int numberOfClouds = cloudsTable.getNumberOfCloudsFromDatabase();
+            //Wenn noch keine Clouds gespeichert wurden, werden die ausgewählten Clouds ohne weiteres gespeichert
             if (numberOfClouds == 0) {
                 for (int i = 0; i < numberOfPaths; i++) {
                     Clouds clouds = createCloudsObject(selectedDirPath[i], i + 1, cloudSize[i], spinnerValue);
                     cloudsTable.saveCloud(clouds);
                 }
+                //wenn die angegeben Clouds, weniger oder genauso viele sind, wie bereits in der DB angegeben
             } else if (numberOfPaths < numberOfClouds || numberOfPaths == numberOfClouds) {
                 Parent rootReplace;
                 try {
@@ -389,19 +403,25 @@ public class Configuration_fxmlController implements Initializable {
 
                 //System.out.println(dialog.deleteContent);
                 if (dialog.deleteContent) { //Content mit Cloud löschen
+                    //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfPaths; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
                         if (!cloudName.equals(allDirPaths[i])) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
-                    if (partfiles.getNumberOfParts() > 0) {
+                    //Alle alten Informationen zu den Teil-Dateien werden gelöscht
+                    if (partfilesTable.getNumberOfParts() > 0) {
                         deleteOldCloudContent();
                     }
+                    mainTableView.getItems().clear();
 
+                    //Löschen der Clouds, die in der DB zu viel sind
                     cloudsTable.deleteCloudFromDatabase(spinnerValue);
                     cloudsTable.updateCloudNumber(spinnerValue);
-                    mainController.deleteTableView();
+                    originalfileTable.resetAutoIncrement();
+                    partfilesTable.resetAutoIncrement();
+                    /*mainController.deleteTableView();
                     
                     synchronized (this) {
                         Main_fxmlController.waitDeleteTableView = true;
@@ -409,9 +429,10 @@ public class Configuration_fxmlController implements Initializable {
                         notify();
                         Main_fxmlController.waitDeleteTableView = false;
                     }
-
+                     */
+                    //Content wird verschoben
                 } else if (dialog.moveContent) {
-                    //Content verschieben
+                    //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfPaths; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
                         if (!cloudName.equals(allDirPaths[i])) {
@@ -420,13 +441,13 @@ public class Configuration_fxmlController implements Initializable {
                     }
                     cloudsTable.deleteCloudFromDatabase(spinnerValue);
                     cloudsTable.updateCloudNumber(spinnerValue);
-                    if (partfiles.getNumberOfParts() > 0) {
+                    if (partfilesTable.getNumberOfParts() > 0) {
+                        //Content wird verschoben
                         moveOldCloudContent();
                     }
-                    //TODO tabelle aktualisieren
 
                 }
-                //Wenn eine weitere Cloud hinzugefügt wurde
+                //Wenn mehr Clouds angegeben wurden, als in der DB gespeichert sind
             } else if (numberOfPaths > numberOfClouds) {
                 Parent rootReplace;
                 try {
@@ -451,43 +472,54 @@ public class Configuration_fxmlController implements Initializable {
                     }
                 }
                 if (dialog.deleteContent) { //Content mit Cloud löschen
+                    //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfClouds; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
                         if (!cloudName.equals(allDirPaths[i])) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
+                    //Die Clouds, die mehr angegeben wurde, werden gespeichert
                     for (int i = numberOfClouds; i < numberOfPaths; i++) {
                         Clouds clouds = createCloudsObject(allDirPaths[i], i + 1, cloudSize[i], spinnerValue);
                         cloudsTable.saveCloud(clouds);
                     }
-                    if (partfiles.getNumberOfParts() > 0) {
+                    //Alle Informationen über alte Teil-Dateien werden gelöscht
+                    if (partfilesTable.getNumberOfParts() > 0) {
                         deleteOldCloudContent();
                     }
                     cloudsTable.updateCloudNumber(spinnerValue);
-                    mainController.deleteTableView();
                     
+                    mainTableView.getItems().clear();
+                    originalfileTable.resetAutoIncrement();
+                    partfilesTable.resetAutoIncrement();
+                    /*mainController.deleteTableView();
+
                     synchronized (this) {
                         Main_fxmlController.waitDeleteTableView = true;
                         deleteTableView = true;
                         notify();
                         Main_fxmlController.waitDeleteTableView = false;
                     }
-                    
+                     */
+                    //Verschieben des alten Contents
                 } else if (dialog.moveContent) {
+                    //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfClouds; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
                         if (!cloudName.equals(allDirPaths[i])) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
+                    //Clouds die mehr angegeben wurde, als in der DB, werde gespeichert
                     for (int i = numberOfClouds; i < numberOfPaths; i++) {
                         Clouds clouds = createCloudsObject(allDirPaths[i], i + 1, cloudSize[i], spinnerValue);
                         cloudsTable.saveCloud(clouds);
                     }
                     cloudsTable.deleteCloudFromDatabase(spinnerValue);
                     cloudsTable.updateCloudNumber(spinnerValue);
-                    if (partfiles.getNumberOfParts() > 0) {
+                    if (partfilesTable.getNumberOfParts() > 0) {
+                        //Content wird verschoben
                         moveOldCloudContent();
                     }
                 }
@@ -505,10 +537,10 @@ public class Configuration_fxmlController implements Initializable {
                     tempDir.saveTempDir(tempDirPath);
                 }
             }
-            
+
             Stage stage = (Stage) confirmConfigButton.getScene().getWindow();
             stage.close();
-            
+
         } else {
             Parent root;
             FXMLLoader loader = new FXMLLoader(Main_fxmlController.class.getResource("ConfigDialog_fxml.fxml"));
@@ -537,10 +569,10 @@ public class Configuration_fxmlController implements Initializable {
      * Erstellt ein Objekt, welches die Informationen zur ausgewählten Cloud
      * speichert
      *
-     * @param cloud
-     * @param id
-     * @param size
-     * @param number
+     * @param cloud Pfad zu cloud
+     * @param id id-Nummer
+     * @param size angegebene Größe der Cloud
+     * @param number Gesamt-Anzahl der gespeicherten Clouds
      * @return
      */
     public Clouds createCloudsObject(String cloud, int id, int size, int number) {
@@ -654,29 +686,32 @@ public class Configuration_fxmlController implements Initializable {
     public void moveOldCloudContent() throws SQLException, IOException, FileNotFoundException, NoSuchAlgorithmException {
         String tempDirPath = tempDir.getTempDir();
         tempDirPath = placeholderPath.replacePlaceholder(tempDirPath);
-
-        String[] namesOfFiles = partfiles.getNamesOfParts();
+        //Namen und Dateityp der bisher gespeicherten Dateien, werden in jeweils in ein String-Array gespeichert
+        String[] namesOfFiles = partfilesTable.getNamesOfParts();
         String[] typesOfFiles = new String[namesOfFiles.length];
         for (int i = 0; i < namesOfFiles.length; i++) {
-            typesOfFiles[i] = originalfile.getTypeOfFile(namesOfFiles[i]);
-            System.out.println("types: " + typesOfFiles[i]);
+            typesOfFiles[i] = originalfileTable.getTypeOfFile(namesOfFiles[i]);
+            //System.out.println("types: " + typesOfFiles[i]);
         }
-        //Alte Datei-Inforamtionen aus DB löschen
 
-        String[] pathsOfFiles = new String[partfiles.getNumberOfParts()];
+        //bisher gespeicherte Teil-Datei Pfade werden in ein String-Array gespeichert
+        String[] pathsOfFiles = new String[partfilesTable.getNumberOfParts()];
         for (int j = 0; j < pathsOfFiles.length; j++) {
-            pathsOfFiles = partfiles.getPartsPath();
+            pathsOfFiles = partfilesTable.getPartsPath();
 
         }
+        //Platzhalterder Pfade wieder ersetzten
         for (int j = 0; j < pathsOfFiles.length; j++) {
             pathsOfFiles[j] = placeholderPath.replacePlaceholder(pathsOfFiles[j]);
         }
-        originalfile.deleteAllFiles();
+        //Löschen aller alten Informationen über doe Originalpfade
+        originalfileTable.deleteAllFiles();
+        originalfileTable.resetAutoIncrement();
 
         //Cloud ersetzten
         //Alte Teil dateien zusammenfügen
         for (int j = 0; j < namesOfFiles.length; j++) {
-            combinePartsToFile.combinePartsToFile(partfiles.getPartsSize(namesOfFiles[j]), namesOfFiles[j], typesOfFiles[j], false);
+            combinePartsToFile.combinePartsToFile(partfilesTable.getPartsSize(namesOfFiles[j]), namesOfFiles[j], typesOfFiles[j], false);
             File combinedFile = new File(tempDirPath + "\\" + namesOfFiles[j] + "_Original" + typesOfFiles[j]);
             File newFileName = new File(tempDirPath + "\\" + namesOfFiles[j] + typesOfFiles[j]);
             if (combinedFile.renameTo(newFileName)) {
@@ -685,8 +720,9 @@ public class Configuration_fxmlController implements Initializable {
                 System.out.println("File rename failed");
             }
             OriginalFile newFile = createFileObject(newFileName.toString());
-            originalfile.saveOriginalFile(newFile);
-            String[] pathsToDelete = partfiles.getPartsPathPerName(namesOfFiles[j]);
+            originalfileTable.saveOriginalFile(newFile);
+            String[] pathsToDelete = partfilesTable.getPartsPathPerName(namesOfFiles[j]);
+            partfilesTable.resetAutoIncrement();
             for (int i = 0; i < pathsToDelete.length; i++) {
                 if (pathsToDelete[i] != null) {
                     pathsToDelete[i] = placeholderPath.replacePlaceholder(pathsToDelete[i]);
@@ -701,7 +737,7 @@ public class Configuration_fxmlController implements Initializable {
                 }
 
             }
-            partfiles.deletePartsFiles(namesOfFiles[j]);
+            partfilesTable.deletePartsFiles(namesOfFiles[j]);
             moveFile.moveFile();
         }
 
@@ -713,14 +749,17 @@ public class Configuration_fxmlController implements Initializable {
      * @throws SQLException
      */
     public void deleteOldCloudContent() throws SQLException {
-        String[] pathsOfFiles = new String[partfiles.getNumberOfParts()];
+        //bisher gespeicherte Teil-Datei Pfade werden in ein String-Array gespeichert
+        String[] pathsOfFiles = new String[partfilesTable.getNumberOfParts()];
         for (int j = 0; j < pathsOfFiles.length; j++) {
-            pathsOfFiles = partfiles.getPartsPath();
+            pathsOfFiles = partfilesTable.getPartsPath();
 
         }
+        //Platzhalterder Pfade wieder ersetzten
         for (int j = 0; j < pathsOfFiles.length; j++) {
             pathsOfFiles[j] = placeholderPath.replacePlaceholder(pathsOfFiles[j]);
         }
+        //Teil-Dateien werden in der Cloud gelöscht
         if (pathsOfFiles[0] != null) {
             for (int w = 0; w < pathsOfFiles.length; w++) {
                 try {
@@ -733,9 +772,8 @@ public class Configuration_fxmlController implements Initializable {
         }
 
         //Alte Informationen werden aus DB gelöscht
-        partfiles.deleteAllPartFiles();
-        originalfile.deleteAllFiles();
-        //TODO tabelle im Main Fenster aktualisieren
+        partfilesTable.deleteAllPartFiles();
+        originalfileTable.deleteAllFiles();
 
     }
 
@@ -751,7 +789,7 @@ public class Configuration_fxmlController implements Initializable {
      */
     public OriginalFile createFileObject(String path) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         OriginalFile file = new OriginalFile();
-        System.out.println(path);
+        //System.out.println(path);
         String filePath = path;
         String fileName = "";
         String type = "";
