@@ -125,6 +125,8 @@ public class Main_fxmlController extends Thread implements Initializable {
     private Label progressLabel;
     @FXML
     private ProgressIndicator progressIndicator;
+    @FXML
+    private Button refreshLabelButton;
 
     
 
@@ -401,6 +403,33 @@ public class Main_fxmlController extends Thread implements Initializable {
             if (cloudTableView.getSelectionModel().getSelectedItem() != null) {
                 CloudTableView file = (CloudTableView) cloudTableView.getSelectionModel().getSelectedItem();
                 combinePartsToFile.combinePartsToFile(partfilesTable.getPartsSize(file.getFile()), file.getFile(), file.getType(), true);
+            }
+        }
+    }
+    
+    /**
+     * Aktuallisierung der Tabelle über Button
+     * @param e Action Event
+     */
+    public void refreshTable(ActionEvent e) {
+        cloudTableView.getItems().clear();
+        List<OriginalFile> filesTable = new ArrayList<>();
+        try {
+            filesTable = originalfileTable.getOriginalFilesForTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Falls sich Dateien in der Cloud befinden, werden diese in der Tabelle angezeigt
+        if (filesTable != null) {
+            for (int i = 0; i < filesTable.size(); i++) {
+                CloudTableView tempEntry = new CloudTableView(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
+                
+                try {
+                    addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                 
             }
         }
     }

@@ -73,6 +73,11 @@
                                         </TableView>
                               <ProgressIndicator fx:id="progressIndicator" layoutX="525.0" opacity="0.0" prefHeight="20.0" prefWidth="19.0" />
                               <Label fx:id="progressLabel" layoutX="398.0" layoutY="2.0" opacity="0.0" text="Datei wird verschoben:" />
+                              <Button fx:id="refreshTableButton" onAction="#refreshTable" layoutY="-2.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="107.0" text="Tabelle aktualisieren">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="79.0" prefWidth="558.0">

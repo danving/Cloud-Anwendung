@@ -5,18 +5,19 @@ Java JDK installieren
 
 Cloud-Ordner auf Rechner installieren
 1. Die GoogleDrive Cloud muss installiert werden, da sie die Datenbank enthält
-2. OneDrive und Dropbox sind optional, können aber verwendet werden
-3. sonst kann jede beliebe andere Cloud verwendet werden
-4. OneDrive bitte unter "C:\Users\"username"\OneDrive-Cloud\OneDrive" speichern und "username" ersetzten
-5. Anmeldedaten bitte anfragen
+2. OneDrive und pCloud sind optional, können aber verwendet werden, da hier bereits ein Account erstellt wurde
+3. pCloud wird standartmäßig als eigenes Netzlaufwerk installiert. Bitte auf beiden Rechnern einen neuen Ordner, mit dem selben Name, anlegen und diesen über den Client synchronisieren.
+4. sonst kann jede beliebe andere Cloud verwendet werden
+5. OneDrive bitte unter "C:\Users\"username"\OneDrive-Cloud\OneDrive" speichern und "username" ersetzten
+6. Generell sollten alle Clouds über "C:\Users\"username"\.." laufen.
+7. Anmeldedaten bitte anfragen
 
 
 Programm Installieren
 1. Ordner "Cloud Programm" runterladen (beinhaltet die Cloud.exe und einen lib-Ordner)
-2. WICHTIG: Darauf achten, dass die .exe und der Ordner in dem gleichen Ordner liegen
+2. WICHTIG: Darauf achten, dass die .exe und der lib-Ordner in dem gleichen Ordner liegen
 3. Es kann sein, dass die Datei, sich nicht öffnen lässt, da vermutet wird, dass es sich um ein Virus handelt -> Berechtigung erteilen
 4. Datei öffnen
-
 
 
 Programm Benutzung
@@ -27,3 +28,4 @@ Programm Benutzung
 4. Im Hauptfenster kann nun eine Datei in das untere rechte Feld gezogen werden.
 5. Auf "Verschieben" drücken, um die ausgewählte Datei in die Cloud zu verschieben.
 6. In der Tabelle darüber werden alle Dateien angezeigt, die bisher in der Cloud gespeichert wurden. Um diese zu öffen, Doppelklick auf die gewünschte Datei.
+7. Die Tabelle kann auf dem anderen Rechner aktualisiert werden. Dies kann allerdings einen Moment dauern, da die Dateien auf dem Rechner erstmal synchronisiert werden müssen.

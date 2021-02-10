@@ -414,6 +414,7 @@ public class Configuration_fxmlController implements Initializable {
             }
             //Anzahl der Clouds, die bereits in der DB gespeichert sind
             int numberOfClouds = cloudsTable.getNumberOfCloudsFromDatabase();
+            
             //Wenn noch keine Clouds gespeichert wurden, werden die ausgewählten Clouds ohne weiteres gespeichert
             if (numberOfClouds == 0) {
                 for (int i = 0; i < numberOfPaths; i++) {
@@ -450,7 +451,7 @@ public class Configuration_fxmlController implements Initializable {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfPaths; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                        if (!cloudName.equals(allDirPaths[i])) {
+                        if (!cloudName.equals(allDirPaths[i]) || cloudSize[i] != cloudsTable.getCloudSize()[i]) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
@@ -471,7 +472,7 @@ public class Configuration_fxmlController implements Initializable {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfPaths; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                        if (!cloudName.equals(allDirPaths[i])) {
+                        if (!cloudName.equals(allDirPaths[i]) || cloudSize[i] != cloudsTable.getCloudSize()[i]) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
@@ -511,7 +512,7 @@ public class Configuration_fxmlController implements Initializable {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfClouds; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                        if (!cloudName.equals(allDirPaths[i])) {
+                        if (!cloudName.equals(allDirPaths[i]) || cloudSize[i] != cloudsTable.getCloudSize()[i] ) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
@@ -535,7 +536,7 @@ public class Configuration_fxmlController implements Initializable {
                     //Falls, die angegebene Cloud an der Stelle i nicht der Cloud in der DB enspricht, wird die in der DB ersetzt
                     for (int i = 0; i < numberOfClouds; i++) {
                         String cloudName = placeholderPath.replacePlaceholder(cloudsTable.getCloudsPathsFromDatabase(i));
-                        if (!cloudName.equals(allDirPaths[i])) {
+                        if (!cloudName.equals(allDirPaths[i]) || cloudSize[i] != cloudsTable.getCloudSize()[i]) {
                             cloudsTable.updateCloud(allDirPaths[i], cloudSize[i], i + 1);
                         }
                     }
