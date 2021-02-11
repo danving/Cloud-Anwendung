@@ -91,7 +91,8 @@ public class Main_fxmlController extends Thread implements Initializable {
     public static String fileName = "-";
     /**
      * Pfad , der Datei, die in das DragNDrop Feld kopiert wurde
-     * */
+     *
+     */
     public static String filePath = "-";
     /**
      * Boolean für Synchronisation für ReplaceDialog_fxmlController()
@@ -128,9 +129,6 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     private Button refreshLabelButton;
 
-    
-
-
     /**
      * Initialisiert die Tabelle mit allen Dateien, die sich bereits in der
      * Datenbank befinden
@@ -152,13 +150,13 @@ public class Main_fxmlController extends Thread implements Initializable {
         if (filesTable != null) {
             for (int i = 0; i < filesTable.size(); i++) {
                 CloudTableView tempEntry = new CloudTableView(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
-                
+
                 try {
                     addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
                 } catch (SQLException ex) {
                     Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                 
+
             }
         }
     }
@@ -172,7 +170,7 @@ public class Main_fxmlController extends Thread implements Initializable {
     @FXML
     public void configButton(ActionEvent event) {
         Parent root;
-        URL configURL = getClass().getResource("Configuration_fxml.fxml"); 
+        URL configURL = getClass().getResource("Configuration_fxml.fxml");
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(configURL);
@@ -183,7 +181,6 @@ public class Main_fxmlController extends Thread implements Initializable {
             configStage.setTitle("Einstellungen");
             configStage.setScene(new Scene(root, 600, 520));
             configStage.showAndWait();
-           
 
         } catch (IOException e) {
         }
@@ -376,8 +373,9 @@ public class Main_fxmlController extends Thread implements Initializable {
                                 //System.out.println("Table Row deleted");
                             }
 
-                            addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());                     
                         }
+                        addTableViewEntry(originalfileTable.getLastEntryName(), originalfileTable.getLastEntryDate(), originalfileTable.getLastEntryType(), originalfileTable.getLastEntrySize());
+
                     }
 
                 }
@@ -406,9 +404,10 @@ public class Main_fxmlController extends Thread implements Initializable {
             }
         }
     }
-    
+
     /**
      * Aktuallisierung der Tabelle über Button
+     *
      * @param e Action Event
      */
     public void refreshTable(ActionEvent e) {
@@ -423,13 +422,13 @@ public class Main_fxmlController extends Thread implements Initializable {
         if (filesTable != null) {
             for (int i = 0; i < filesTable.size(); i++) {
                 CloudTableView tempEntry = new CloudTableView(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
-                
+
                 try {
                     addTableViewEntry(filesTable.get(i).getName(), filesTable.get(i).getDate(), filesTable.get(i).getType(), filesTable.get(i).getSize());
                 } catch (SQLException ex) {
                     Logger.getLogger(Main_fxmlController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                 
+
             }
         }
     }
@@ -526,7 +525,5 @@ public class Main_fxmlController extends Thread implements Initializable {
         cloudTableView.getItems().add(new CloudTableView(file, date, type, size));
 
     }
-    
-    
 
 }
